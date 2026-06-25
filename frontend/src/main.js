@@ -1,35 +1,46 @@
 import "./styles.css";
 
-import { listAuthors } from "./api/authors.js";
-import { listBooks } from "./api/books.js";
-import { listCategories } from "./api/categories.js";
-import { listNationalities } from "./api/nationalities.js";
+import {
+  listAlumnos,
+  listAsignaciones,
+  listBloques,
+  listCarreras,
+  listCursos,
+  listPruebas,
+  listSalas,
+  listUsoSala,
+} from "./api/academic.js";
 import { setReferenceData, state } from "./state/store.js";
 import { bindFormHandlers } from "./ui/forms.js";
 import { render, setStatusMessage } from "./ui/render.js";
 
 async function loadData() {
-  setStatusMessage("Loading data from the API...");
+  setStatusMessage("Cargando asignaciones desde la API...");
 
-  const [nationalities, categories, authors, books] = await Promise.all([
-    listNationalities(),
-    listCategories(),
-    listAuthors(),
-    listBooks(),
-  ]);
+  const [alumnos, carreras, cursos, bloques, pruebas, salas, usoSala, asignaciones] =
+    await Promise.all([
+      listAlumnos(),
+      listCarreras(),
+      listCursos(),
+      listBloques(),
+      listPruebas(),
+      listSalas(),
+      listUsoSala(),
+      listAsignaciones(),
+    ]);
 
-  setReferenceData({ nationalities, categories, authors, books });
+  setReferenceData({ alumnos, carreras, cursos, bloques, pruebas, salas, usoSala, asignaciones });
 
   render(state);
-  setStatusMessage("Connected. Data is coming from PostgreSQL through FastAPI.");
+  setStatusMessage("Conectado. Los datos vienen desde PostgreSQL a traves de FastAPI.");
 }
 
 function showError(error) {
-  setStatusMessage(`Could not complete request: ${error.message}`);
+  setStatusMessage(`No se pudo completar la solicitud: ${error.message}`);
 }
 
 bindFormHandlers({ loadData, showError });
 
 loadData().catch((error) => {
-  setStatusMessage(`Could not load API data: ${error.message}`);
+  setStatusMessage(`No se pudieron cargar los datos de la API: ${error.message}`);
 });

@@ -1,13 +1,30 @@
 export const state = {
-  nationalities: [],
-  categories: [],
-  authors: [],
-  books: [],
+  alumnos: [],
+  carreras: [],
+  cursos: [],
+  bloques: [],
+  pruebas: [],
+  salas: [],
+  usoSala: [],
+  asignaciones: [],
 };
 
-export function setReferenceData({ nationalities, categories, authors, books }) {
-  state.nationalities = nationalities;
-  state.categories = categories;
-  state.authors = authors;
-  state.books = books;
+export function setReferenceData({
+  alumnos,
+  carreras,
+  cursos,
+  bloques,
+  pruebas,
+  salas,
+  usoSala,
+  asignaciones,
+}) {
+  state.alumnos = alumnos;
+  state.carreras = carreras;
+  state.cursos = cursos;
+  state.bloques = bloques;
+  state.pruebas = pruebas;
+  state.salas = salas;
+  state.usoSala = usoSala;
+  state.asignaciones = asignaciones;
 }

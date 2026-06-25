@@ -1,18 +1,40 @@
-import { createAuthor, listBooksByAuthor } from "../api/authors.js";
-import { createBook } from "../api/books.js";
-import { renderAuthorBooks } from "./render.js";
+import {
+  createAlumno,
+  createAlumnoCarrera,
+  createAsignacion,
+  listAsignacionesByAlumno,
+} from "../api/academic.js";
+import { renderAlumnoAsignaciones } from "./render.js";
+
+function parseUsoSalaKey(value) {
+  const [idEvaluacion, idSala, nBloque] = value.split("|");
+  return {
+    id_evaluacion: Number(idEvaluacion),
+    id_sala: idSala,
+    n_bloque: Number(nBloque),
+  };
+}
 
 export function bindFormHandlers({ loadData, showError }) {
-  document.querySelector("#author-form").addEventListener("submit", async (event) => {
+  document.querySelector("#alumno-form").addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const rut = String(formData.get("rut")).trim();
+    const idCarrera = Number(formData.get("id_carrera"));
 
     try {
-      await createAuthor({
-        name: formData.get("name"),
-        nationality_id: Number(formData.get("nationality_id")),
+      await createAlumno({
+        rut,
+        nombre: formData.get("nombre"),
+        apellido: formData.get("apellido"),
+        email: formData.get("email") || null,
+      });
+
+      await createAlumnoCarrera({
+        rut_alumno: rut,
+        id_carrera: idCarrera,
       });
 
       form.reset();
@@ -22,18 +44,17 @@ export function bindFormHandlers({ loadData, showError }) {
     }
   });
 
-  document.querySelector("#book-form").addEventListener("submit", async (event) => {
+  document.querySelector("#asignacion-form").addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const usoSala = parseUsoSalaKey(formData.get("uso_sala_key"));
 
     try {
-      await createBook({
-        title: formData.get("title"),
-        publication_year: Number(formData.get("publication_year")),
-        author_id: Number(formData.get("author_id")),
-        category_id: Number(formData.get("category_id")),
+      await createAsignacion({
+        rut_alumno: formData.get("rut_alumno"),
+        ...usoSala,
       });
 
       form.reset();
@@ -43,12 +64,12 @@ export function bindFormHandlers({ loadData, showError }) {
     }
   });
 
-  document.querySelector("#load-author-books").addEventListener("click", async () => {
-    const authorId = document.querySelector("#books-by-author-select").value;
+  document.querySelector("#load-alumno-asignaciones").addEventListener("click", async () => {
+    const rutAlumno = document.querySelector("#asignaciones-by-alumno-select").value;
 
     try {
-      const books = await listBooksByAuthor(authorId);
-      renderAuthorBooks(books);
+      const asignaciones = await listAsignacionesByAlumno(rutAlumno);
+      renderAlumnoAsignaciones(asignaciones);
     } catch (error) {
       showError(error);
     }

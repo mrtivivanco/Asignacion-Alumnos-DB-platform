@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from sqlmodel import Session
 
 from .db.config import create_db_and_tables, engine
-from .routes import authors, books, categories, nationalities
+from .routes import academic
 from .utils.seed import seed_demo_data
 
 
@@ -17,22 +17,19 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Database Course Reference API",
-    description="Small FastAPI + SQLModel example for a database course.",
+    title="Sistema de Asignacion de Pruebas API",
+    description="FastAPI + SQLModel para asignar alumnos a pruebas extraordinarias.",
     version="0.1.0",
     lifespan=lifespan,
 )
 
-app.include_router(nationalities.router)
-app.include_router(categories.router)
-app.include_router(authors.router)
-app.include_router(books.router)
+app.include_router(academic.router)
 
 
 @app.get("/")
 def root() -> dict[str, str]:
     return {
-        "message": "Database Course Reference API",
+        "message": "Sistema de Asignacion de Pruebas API",
         "docs": "/docs",
     }
 

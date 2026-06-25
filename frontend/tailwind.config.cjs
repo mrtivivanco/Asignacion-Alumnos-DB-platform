@@ -3,10 +3,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        ink: "#211a14",
-        parchment: "#f4efe6",
-        coffee: "#6c3e22",
-        gold: "#f7c77a",
+        ink: "#000000",
+        charcoal: "#111111",
+        paper: "#FFFFFF",
+        mist: "#F7F7F7",
+        electric: "#2B8BE3",
+        gold: "#E5A93C",
       },
     },
   },
