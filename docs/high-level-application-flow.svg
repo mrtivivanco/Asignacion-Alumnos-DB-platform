@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="784.8" viewBox="0 0 760 1380" role="img" aria-labelledby="title desc">
+  <title id="title">High-level application flow</title>
+  <desc id="desc">User, browser, frontend, backend, and PostgreSQL database request and response flow.</desc>
+
+  <defs>
+    <marker id="arrow-request" markerWidth="14" markerHeight="14" refX="14" refY="7" orient="auto" markerUnits="strokeWidth" viewBox="0 0 14 14">
+      <path d="M 0 0 L 14 7 L 0 14 z" fill="#334155" />
+    </marker>
+
+    <marker id="arrow-response" markerWidth="14" markerHeight="14" refX="14" refY="7" orient="auto" markerUnits="strokeWidth" viewBox="0 0 14 14">
+      <path d="M 0 0 L 14 7 L 0 14 z" fill="#64748b" />
+    </marker>
+
+    <style>
+      .canvas {
+        fill: #ffffff;
+      }
+
+      .box,
+      .db {
+        fill: #f8fafc;
+        stroke: #94a3b8;
+        stroke-width: 2.5;
+      }
+
+      .node-label,
+      .node-subtitle,
+      .edge-label {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        fill: #0f172a;
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
+
+      .node-label {
+        font-size: 30px;
+        font-weight: 600;
+      }
+
+      .node-subtitle {
+        font-size: 23px;
+        font-weight: 500;
+      }
+
+      .request-edge {
+        fill: none;
+        stroke: #334155;
+        stroke-width: 3;
+        marker-end: url(#arrow-request);
+      }
+
+      .response-edge {
+        fill: none;
+        stroke: #64748b;
+        stroke-width: 2.5;
+        stroke-dasharray: 8 8;
+        marker-end: url(#arrow-response);
+      }
+
+      .label-bg {
+        fill: #ffffff;
+        stroke: #cbd5e1;
+        stroke-width: 1.5;
+      }
+
+      .edge-label {
+        font-size: 19px;
+        font-weight: 500;
+        fill: #334155;
+      }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="760" height="1380" />
+
+  <!-- Nodes -->
+  <rect class="box" x="260" y="40" width="240" height="100" rx="14" />
+  <text class="node-label" x="380" y="90">User</text>
+
+  <rect class="box" x="210" y="295" width="340" height="100" rx="14" />
+  <text class="node-label" x="380" y="345">Browser</text>
+
+  <rect class="box" x="140" y="560" width="480" height="130" rx="14" />
+  <text class="node-label" x="380" y="606">Frontend</text>
+  <text class="node-subtitle" x="380" y="650">Vite + HTML/CSS/JS</text>
+
+  <rect class="box" x="190" y="850" width="380" height="130" rx="14" />
+  <text class="node-label" x="380" y="896">Backend</text>
+  <text class="node-subtitle" x="380" y="940">FastAPI API</text>
+
+  <path class="db" d="M 170 1215 C 170 1175 590 1175 590 1215 L 590 1310 C 590 1350 170 1350 170 1310 Z" />
+  <ellipse class="db" cx="380" cy="1215" rx="210" ry="40" />
+  <text class="node-label" x="380" y="1270">Database</text>
+  <text class="node-subtitle" x="380" y="1310">PostgreSQL</text>
+
+  <!-- Request and response arrows -->
+  <path class="request-edge" d="M 270 140 L 270 295" />
+  <path class="response-edge" d="M 490 295 L 490 140" />
+
+  <path class="request-edge" d="M 270 395 L 270 560" />
+  <path class="response-edge" d="M 490 560 L 490 395" />
+
+  <path class="request-edge" d="M 270 690 L 270 850" />
+  <path class="response-edge" d="M 490 850 L 490 690" />
+
+  <path class="request-edge" d="M 270 980 L 270 1181" />
+  <path class="response-edge" d="M 490 1181 L 490 980" />
+
+  <!-- Arrow labels -->
+  <rect class="label-bg" x="180" y="197" width="180" height="42" />
+  <text class="edge-label" x="270" y="218">uses app</text>
+
+  <rect class="label-bg" x="395" y="197" width="190" height="42" />
+  <text class="edge-label" x="490" y="218">page updates</text>
+
+  <rect class="label-bg" x="165" y="456" width="210" height="42" />
+  <text class="edge-label" x="270" y="477">opens local app</text>
+
+  <rect class="label-bg" x="395" y="456" width="190" height="42" />
+  <text class="edge-label" x="490" y="477">rendered UI</text>
+
+  <rect class="label-bg" x="187" y="750" width="166" height="42" />
+  <text class="edge-label" x="270" y="771">fetch /api/*</text>
+
+  <rect class="label-bg" x="385" y="750" width="210" height="42" />
+  <text class="edge-label" x="490" y="771">JSON response</text>
+
+  <rect class="label-bg" x="155" y="1069" width="230" height="42" />
+  <text class="edge-label" x="270" y="1090">SQLModel queries</text>
+
+  <rect class="label-bg" x="395" y="1069" width="190" height="42" />
+  <text class="edge-label" x="490" y="1090">rows/results</text>
+</svg>

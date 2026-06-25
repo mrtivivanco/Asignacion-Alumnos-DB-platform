@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Database Course Reference</title>
+  </head>
+  <body class="min-h-screen bg-parchment text-ink antialiased">
+    <header class="bg-gradient-to-br from-[#2f2118] to-coffee px-5 py-12 text-[#fff9ef] sm:px-10 lg:px-20">
+      <div class="mx-auto max-w-6xl">
+        <p class="mb-3 text-xs font-black uppercase tracking-[0.2em] text-gold">
+          PostgreSQL + FastAPI + SQLModel + Vite
+        </p>
+        <h1 class="max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.06em] sm:text-6xl lg:text-7xl">
+          Authors and Books Reference App
+        </h1>
+        <p class="mt-5 max-w-2xl text-base leading-7 text-[#fff4df] sm:text-lg">
+          This frontend is plain HTML and JavaScript styled with Tailwind CSS.
+          It uses browser <code class="rounded-md bg-white/15 px-1.5 py-0.5">fetch</code>
+          calls to read and write data through the FastAPI backend.
+        </p>
+        <nav class="mt-7 flex flex-wrap gap-3">
+          <a class="rounded-full bg-gold px-5 py-3 font-extrabold text-[#2f2118] transition hover:-translate-y-0.5 hover:bg-[#ffd993]" href="/docs">Open API Docs</a>
+          <a class="rounded-full border border-white/30 px-5 py-3 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-white/10" href="/health">Health Check</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto grid max-w-6xl gap-5 px-5 py-7 sm:px-6 lg:px-8">
+      <section class="rounded-[1.6rem] border border-[#dccab2] bg-[#fffaf1] p-6 shadow-xl shadow-[#362414]/10">
+        <h2 class="text-2xl font-black tracking-tight">Connection Status</h2>
+        <p id="status-message" class="mt-2 text-[#6d5946]">Loading data from the API...</p>
+      </section>
+
+      <section class="grid gap-5 lg:grid-cols-2">
+        <article class="rounded-[1.6rem] border border-[#dccab2] bg-[#fffaf1] p-6 shadow-xl shadow-[#362414]/10">
+          <h2 class="text-2xl font-black tracking-tight">Create Author</h2>
+          <form id="author-form" class="mt-5 grid gap-4">
+            <label class="grid gap-2 text-sm font-bold text-[#6d5946]">
+              Name
+              <input class="rounded-2xl border border-[#d3bfa5] bg-[#fffdf7] px-4 py-3 text-ink outline-none transition focus:border-coffee focus:ring-4 focus:ring-gold/30" name="name" type="text" placeholder="Octavia Butler" required />
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-[#6d5946]">
+              Nationality
+              <select class="rounded-2xl border border-[#d3bfa5] bg-[#fffdf7] px-4 py-3 text-ink outline-none transition focus:border-coffee focus:ring-4 focus:ring-gold/30" name="nationality_id" id="author-nationality" required></select>
+            </label>
+
+            <button class="rounded-full bg-gold px-5 py-3 font-extrabold text-[#2f2118] transition hover:-translate-y-0.5 hover:bg-[#ffd993]" type="submit">Save author</button>
+          </form>
+        </article>
+
+        <article class="rounded-[1.6rem] border border-[#dccab2] bg-[#fffaf1] p-6 shadow-xl shadow-[#362414]/10">
+          <h2 class="text-2xl font-black tracking-tight">Create Book</h2>
+          <form id="book-form" class="mt-5 grid gap-4">
+            <label class="grid gap-2 text-sm font-bold text-[#6d5946]">
+              Title
+              <input class="rounded-2xl border border-[#d3bfa5] bg-[#fffdf7] px-4 py-3 text-ink outline-none transition focus:border-coffee focus:ring-4 focus:ring-gold/30" name="title" type="text" placeholder="Kindred" required />
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-[#6d5946]">
+              Publication year
+              <input class="rounded-2xl border border-[#d3bfa5] bg-[#fffdf7] px-4 py-3 text-ink outline-none transition focus:border-coffee focus:ring-4 focus:ring-gold/30" name="publication_year" type="number" min="0" max="2100" value="1979" required />
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-[#6d5946]">
+              Author
+              <select class="rounded-2xl border border-[#d3bfa5] bg-[#fffdf7] px-4 py-3 text-ink outline-none transition focus:border-coffee focus:ring-4 focus:ring-gold/30" name="author_id" id="book-author" required></select>
+            </label>
+
+            <label class="grid gap-2 text-sm font-bold text-[#6d5946]">
+              Category
+              <select class="rounded-2xl border border-[#d3bfa5] bg-[#fffdf7] px-4 py-3 text-ink outline-none transition focus:border-coffee focus:ring-4 focus:ring-gold/30" name="category_id" id="book-category" required></select>
+            </label>
+
+            <button class="rounded-full bg-gold px-5 py-3 font-extrabold text-[#2f2118] transition hover:-translate-y-0.5 hover:bg-[#ffd993]" type="submit">Save book</button>
+          </form>
+        </article>
+      </section>
+
+      <section class="grid gap-5 lg:grid-cols-2">
+        <article class="rounded-[1.6rem] border border-[#dccab2] bg-[#fffaf1] p-6 shadow-xl shadow-[#362414]/10">
+          <h2 class="text-2xl font-black tracking-tight">Books</h2>
+          <ul id="book-list" class="mt-5 grid gap-3"></ul>
+        </article>
+
+        <article class="rounded-[1.6rem] border border-[#dccab2] bg-[#fffaf1] p-6 shadow-xl shadow-[#362414]/10">
+          <h2 class="text-2xl font-black tracking-tight">Authors</h2>
+          <ul id="author-list" class="mt-5 grid gap-3"></ul>
+        </article>
+      </section>
+
+      <section class="rounded-[1.6rem] border border-[#dccab2] bg-[#fffaf1] p-6 shadow-xl shadow-[#362414]/10">
+        <h2 class="text-2xl font-black tracking-tight">Relationship Query</h2>
+        <p class="mt-2 text-[#6d5946]">Select an author and call <code class="rounded-md bg-[#eadbc6] px-1.5 py-0.5">/api/authors/{id}/books</code>.</p>
+        <div class="mt-5 grid gap-3 sm:grid-cols-[1fr_auto]">
+          <select class="rounded-2xl border border-[#d3bfa5] bg-[#fffdf7] px-4 py-3 text-ink outline-none transition focus:border-coffee focus:ring-4 focus:ring-gold/30" id="books-by-author-select"></select>
+          <button class="rounded-full bg-gold px-5 py-3 font-extrabold text-[#2f2118] transition hover:-translate-y-0.5 hover:bg-[#ffd993]" id="load-author-books" type="button">Load author's books</button>
+        </div>
+        <ul id="author-book-list" class="mt-5 grid gap-3"></ul>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

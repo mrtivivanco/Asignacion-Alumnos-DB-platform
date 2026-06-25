@@ -1,0 +1,81 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Create .env from .env.example and set POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?Create .env from .env.example and set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Create .env from .env.example and set POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_HOST_PORT:?Create .env from .env.example and set POSTGRES_HOST_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Create .env from .env.example and set POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?Create .env from .env.example and set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Create .env from .env.example and set POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    ports:
+      - "${API_PORT:?Create .env from .env.example and set API_PORT}:${API_INTERNAL_PORT:?Create .env from .env.example and set API_INTERNAL_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/app:/app/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port ${API_INTERNAL_PORT} --reload
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:${API_INTERNAL_PORT}/health', timeout=2)\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      API_INTERNAL_PORT: ${API_INTERNAL_PORT:?Create .env from .env.example and set API_INTERNAL_PORT}
+      API_PROXY_TARGET: http://api:${API_INTERNAL_PORT:?Create .env from .env.example and set API_INTERNAL_PORT}
+      FRONTEND_INTERNAL_PORT: ${FRONTEND_INTERNAL_PORT:?Create .env from .env.example and set FRONTEND_INTERNAL_PORT}
+    ports:
+      - "${FRONTEND_PORT:?Create .env from .env.example and set FRONTEND_PORT}:${FRONTEND_INTERNAL_PORT:?Create .env from .env.example and set FRONTEND_INTERNAL_PORT}"
+    depends_on:
+      api:
+        condition: service_healthy
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    command: npm run dev -- --host 0.0.0.0 --port ${FRONTEND_INTERNAL_PORT}
+
+  links:
+    image: alpine:3.20
+    depends_on:
+      api:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    command:
+      - /bin/sh
+      - -c
+      - |
+        printf '\nDatabase Course Reference is running:\n\n'
+        printf '  Frontend:              http://localhost:${FRONTEND_PORT}\n'
+        printf '  API:                   http://localhost:${API_PORT}\n'
+        printf '  API docs:              http://localhost:${API_PORT}/docs\n'
+        printf '  API docs via frontend: http://localhost:${FRONTEND_PORT}/docs\n'
+        printf '  Health check:          http://localhost:${API_PORT}/health\n'
+        printf '  PostgreSQL:            localhost:${POSTGRES_HOST_PORT}\n\n'
+    restart: "no"
+
+volumes:
+  postgres_data:
+  frontend_node_modules:

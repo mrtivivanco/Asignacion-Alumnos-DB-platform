@@ -1,0 +1,291 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="825" height="1219.5" viewBox="0 0 2300 3400" role="img" aria-labelledby="title desc">
+  <title id="title">Detailed application flow</title>
+  <desc id="desc">Detailed flow from user and browser through the frontend layer, backend layer, and PostgreSQL database.</desc>
+
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto" markerUnits="strokeWidth" viewBox="0 0 12 12">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#334155" />
+    </marker>
+
+    <marker id="arrow-response" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto" markerUnits="strokeWidth" viewBox="0 0 12 12">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#7c3aed" />
+    </marker>
+
+    <style>
+      .canvas {
+        fill: #ffffff;
+      }
+
+      .layer {
+        fill: #f8fafc;
+        stroke: #cbd5e1;
+        stroke-width: 2.5;
+      }
+
+      .validation-group {
+        fill: #eff6ff;
+        stroke: #60a5fa;
+        stroke-dasharray: 12 10;
+        stroke-width: 2.5;
+      }
+
+      .query-group {
+        fill: #ecfdf5;
+        stroke: #34d399;
+        stroke-dasharray: 12 10;
+        stroke-width: 2.5;
+      }
+
+      .box,
+      .db {
+        fill: #ffffff;
+        stroke: #94a3b8;
+        stroke-width: 3;
+      }
+
+      .layer-title,
+      .group-title,
+      .node-label,
+      .node-subtitle,
+      .edge-label {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        fill: #0f172a;
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
+
+      .layer-title {
+        font-size: 30px;
+        font-weight: 700;
+        fill: #334155;
+      }
+
+      .group-title {
+        font-size: 23px;
+        font-weight: 700;
+        fill: #334155;
+      }
+
+      .node-label {
+        font-size: 30px;
+        font-weight: 650;
+      }
+
+      .node-subtitle {
+        font-size: 22px;
+        font-weight: 500;
+      }
+
+      .edge {
+        fill: none;
+        stroke: #334155;
+        stroke-width: 3;
+        marker-end: url(#arrow);
+      }
+
+      .response-edge {
+        fill: none;
+        stroke: #7c3aed;
+        stroke-dasharray: 12 10;
+        stroke-width: 3;
+        marker-end: url(#arrow-response);
+      }
+
+      .label-bg {
+        fill: #ffffff;
+        stroke: #cbd5e1;
+        stroke-width: 1.8;
+      }
+
+      .response-label-bg {
+        fill: #faf5ff;
+        stroke: #a78bfa;
+        stroke-dasharray: 12 10;
+        stroke-width: 1.8;
+      }
+
+      .validation-label-bg {
+        fill: #eff6ff;
+        stroke: #60a5fa;
+        stroke-dasharray: 12 10;
+        stroke-width: 1.8;
+      }
+
+      .query-label-bg {
+        fill: #ecfdf5;
+        stroke: #34d399;
+        stroke-dasharray: 12 10;
+        stroke-width: 1.8;
+      }
+
+      .edge-label {
+        font-size: 20px;
+        font-weight: 500;
+        fill: #334155;
+      }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="2300" height="3400" />
+
+  <!-- User and browser -->
+  <rect class="box" x="980" y="60" width="340" height="110" rx="16" />
+  <text class="node-label" x="1150" y="115">User</text>
+
+  <rect class="box" x="920" y="360" width="460" height="110" rx="16" />
+  <text class="node-label" x="1150" y="415">Browser</text>
+
+  <path class="edge" d="M 1150 170 L 1150 360" />
+  <rect class="label-bg" x="970" y="235" width="360" height="50" />
+  <text class="edge-label" x="1150" y="260">uses app / sees updates</text>
+
+  <!-- Frontend layer -->
+  <rect class="layer" x="80" y="640" width="2140" height="840" rx="24" />
+  <text class="layer-title" x="1150" y="695">Frontend layer</text>
+
+  <rect class="box" x="130" y="805" width="360" height="110" rx="14" />
+  <text class="node-label" x="310" y="860">Vite dev server</text>
+
+  <rect class="box" x="970" y="805" width="360" height="110" rx="14" />
+  <text class="node-label" x="1150" y="860">HTML page</text>
+
+  <rect class="box" x="1810" y="805" width="360" height="110" rx="14" />
+  <text class="node-label" x="1990" y="846">JavaScript</text>
+  <text class="node-subtitle" x="1990" y="882">modules</text>
+
+  <rect class="box" x="300" y="1210" width="390" height="120" rx="14" />
+  <text class="node-label" x="495" y="1252">UI modules</text>
+  <text class="node-subtitle" x="495" y="1292">rendering + forms</text>
+
+  <rect class="box" x="1610" y="1210" width="390" height="120" rx="14" />
+  <text class="node-label" x="1805" y="1252">API modules</text>
+  <text class="node-subtitle" x="1805" y="1292">fetch calls</text>
+
+  <path class="edge" d="M 1150 470 L 1150 575 L 310 575 L 310 805" />
+  <rect class="label-bg" x="960" y="550" width="380" height="50" />
+  <text class="edge-label" x="1150" y="575">opens local URL / displays UI</text>
+
+  <path class="edge" d="M 490 860 L 970 860" />
+  <rect class="label-bg" x="680" y="835" width="100" height="50" />
+  <text class="edge-label" x="730" y="860">serves</text>
+
+  <path class="edge" d="M 1330 860 L 1810 860" />
+  <rect class="label-bg" x="1515" y="835" width="110" height="50" />
+  <text class="edge-label" x="1570" y="860">loads</text>
+
+  <path class="edge" d="M 1990 915 L 1990 1090 L 495 1090 L 495 1210" />
+  <rect class="label-bg" x="955" y="1065" width="390" height="50" />
+  <text class="edge-label" x="1150" y="1090">binds forms + renders state</text>
+
+  <path class="edge" d="M 690 1245 L 1610 1245" />
+  <rect class="label-bg" x="1030" y="1220" width="240" height="50" />
+  <text class="edge-label" x="1150" y="1245">calls API modules</text>
+
+  <!-- Backend layer -->
+  <rect class="layer" x="80" y="1660" width="2140" height="1260" rx="24" />
+  <text class="layer-title" x="1150" y="1715">Backend layer</text>
+
+  <rect class="validation-group" x="930" y="1740" width="1280" height="250" rx="18" />
+  <text class="group-title" x="1570" y="1765">Structure Validation</text>
+
+  <rect class="query-group" x="930" y="2240" width="1280" height="300" rx="18" />
+  <text class="group-title" x="1570" y="2265">Query Structuring</text>
+
+  <rect class="box" x="130" y="1810" width="360" height="110" rx="14" />
+  <text class="node-label" x="310" y="1865">FastAPI app</text>
+
+  <rect class="box" x="970" y="1780" width="360" height="180" rx="14" />
+  <text class="node-label" x="1150" y="1870">Routes</text>
+
+  <rect class="box" x="1810" y="1780" width="360" height="180" rx="14" />
+  <text class="node-label" x="1990" y="1848">DTOs</text>
+  <text class="node-subtitle" x="1990" y="1892">request + response</text>
+
+  <rect class="box" x="970" y="2290" width="360" height="180" rx="14" />
+  <text class="node-label" x="1150" y="2380">CRUD logic</text>
+
+  <rect class="box" x="1810" y="2290" width="360" height="180" rx="14" />
+  <text class="node-label" x="1990" y="2358">DB schema</text>
+  <text class="node-subtitle" x="1990" y="2402">SQLModel tables</text>
+
+  <rect class="box" x="970" y="2730" width="360" height="110" rx="14" />
+  <text class="node-label" x="1150" y="2785">DB session</text>
+
+  <!-- Frontend to backend -->
+  <path class="edge" d="M 1805 1330 L 1805 1540 L 250 1540 L 250 1810" />
+  <rect class="label-bg" x="930" y="1515" width="440" height="50" />
+  <text class="edge-label" x="1150" y="1540">HTTP /api/* request</text>
+
+  <path class="edge" d="M 490 1835 L 970 1835" />
+  <rect class="label-bg" x="665" y="1810" width="130" height="50" />
+  <text class="edge-label" x="730" y="1835">dispatches</text>
+
+  <path class="edge" d="M 1330 1838 L 1810 1838" />
+  <rect class="label-bg" x="1480" y="1811" width="180" height="54" />
+  <text class="edge-label" x="1570" y="1830">
+    <tspan x="1570" dy="0">validates</tspan>
+    <tspan x="1570" dy="24">request DTO</tspan>
+  </text>
+
+  <path class="edge" d="M 1810 1912 L 1330 1912" />
+  <rect class="label-bg" x="1455" y="1887" width="230" height="50" />
+  <text class="edge-label" x="1570" y="1912">validated DTO data</text>
+
+  <path class="edge" d="M 1005 1960 L 1005 2290" />
+  <rect class="validation-label-bg" x="850" y="2045" width="310" height="50" />
+  <text class="edge-label" x="1005" y="2070">DTO validation required</text>
+  <rect class="label-bg" x="840" y="2155" width="330" height="50" />
+  <text class="edge-label" x="1005" y="2180">route uses CRUD operations</text>
+
+  <path class="edge" d="M 1330 2340 L 1810 2340" />
+  <rect class="label-bg" x="1450" y="2315" width="240" height="50" />
+  <text class="edge-label" x="1570" y="2340">uses table models</text>
+
+  <path class="edge" d="M 1810 2420 L 1330 2420" />
+  <rect class="label-bg" x="1450" y="2395" width="240" height="50" />
+  <text class="edge-label" x="1570" y="2420">SQLModel classes</text>
+
+  <path class="edge" d="M 1005 2470 L 1005 2730" />
+  <rect class="query-label-bg" x="860" y="2500" width="290" height="50" />
+  <text class="edge-label" x="1005" y="2525">schema model required</text>
+  <rect class="label-bg" x="880" y="2610" width="250" height="50" />
+  <text class="edge-label" x="1005" y="2635">opens DB session</text>
+
+  <!-- Database -->
+  <path class="db" d="M 820 3200 C 820 3155 1480 3155 1480 3200 L 1480 3315 C 1480 3360 820 3360 820 3315 Z" />
+  <ellipse class="db" cx="1150" cy="3200" rx="330" ry="45" />
+  <text class="node-label" x="1150" y="3265">PostgreSQL</text>
+
+  <path class="edge" d="M 1005 2840 L 1005 3155" />
+  <rect class="label-bg" x="835" y="2960" width="340" height="50" />
+  <text class="edge-label" x="1005" y="2985">SQL queries</text>
+
+  <!-- Response flow -->
+  <path class="response-edge" d="M 1300 3155 L 1300 2840" />
+  <rect class="response-label-bg" x="1210" y="3030" width="180" height="50" />
+  <text class="edge-label" x="1300" y="3055">result rows</text>
+
+  <path class="response-edge" d="M 1300 2730 L 1300 2470" />
+  <rect class="response-label-bg" x="1190" y="2560" width="220" height="50" />
+  <text class="edge-label" x="1300" y="2585">result objects</text>
+
+  <path class="response-edge" d="M 1300 2290 L 1300 1960" />
+  <rect class="response-label-bg" x="1195" y="2115" width="210" height="50" />
+  <text class="edge-label" x="1300" y="2140">response data</text>
+
+  <path class="response-edge" d="M 970 1910 L 490 1910" />
+  <rect class="response-label-bg" x="575" y="1885" width="310" height="50" />
+  <text class="edge-label" x="730" y="1910">FastAPI returns response</text>
+
+  <path class="response-edge" d="M 370 1810 L 370 1620 L 1880 1620 L 1880 1330" />
+  <rect class="response-label-bg" x="960" y="1595" width="380" height="50" />
+  <text class="edge-label" x="1150" y="1620">JSON response</text>
+
+  <path class="response-edge" d="M 1610 1305 L 690 1305" />
+  <rect class="response-label-bg" x="1025" y="1280" width="250" height="50" />
+  <text class="edge-label" x="1150" y="1305">data for rendering</text>
+
+  <path class="response-edge" d="M 585 1210 L 585 735 L 1600 735 L 1600 415 L 1380 415" />
+  <rect class="response-label-bg" x="1470" y="710" width="260" height="50" />
+  <text class="edge-label" x="1600" y="735">rendered UI</text>
+</svg>
