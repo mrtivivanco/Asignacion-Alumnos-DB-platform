@@ -120,7 +120,7 @@ def create_curso(session: Session, data: CursoCreate) -> Curso:
     return curso
 
 
-def curso_to_read(curso: Curso) -> CursoRead:
+def curso_to_read(session: Session, curso: Curso) -> CursoRead:
     return CursoRead(
         id_curso=require_id(curso.id_curso, "Curso"),
         seccion=curso.seccion,
@@ -134,8 +134,21 @@ def list_inscripciones(session: Session) -> list[Inscripcion]:
     return list(session.exec(select(Inscripcion).order_by(Inscripcion.rut_alumno)).all())
 
 
+def list_inscripciones_by_curso(session: Session, id_curso: int) -> list[Inscripcion]:
+    statement = (
+        select(Inscripcion)
+        .where(Inscripcion.id_curso == id_curso)
+        .order_by(Inscripcion.rut_alumno)
+    )
+    return list(session.exec(statement).all())
+
+
 def get_inscripcion(session: Session, rut_alumno: str, id_curso: int) -> Inscripcion | None:
     return session.get(Inscripcion, (rut_alumno, id_curso))
+
+
+def alumno_is_inscrito_en_curso(session: Session, rut_alumno: str, id_curso: int) -> bool:
+    return get_inscripcion(session, rut_alumno, id_curso) is not None
 
 
 def create_inscripcion(session: Session, data: InscripcionCreate) -> Inscripcion:
@@ -154,7 +167,7 @@ def inscripcion_to_read(session: Session, item: Inscripcion) -> InscripcionRead:
         id_curso=item.id_curso,
         fecha_inscripcion=item.fecha_inscripcion,
         alumno=alumno_to_read(alumno),
-        curso=curso_to_read(curso),
+        curso=curso_to_read(session, curso),
     )
 
 
@@ -202,7 +215,7 @@ def prueba_to_read(session: Session, prueba: Prueba) -> PruebaRead:
         nombre=prueba.nombre,
         tipo=prueba.tipo,
         anio_creacion=prueba.anio_creacion,
-        curso=curso_to_read(curso),
+        curso=curso_to_read(session, curso),
     )
 
 
@@ -277,6 +290,19 @@ def list_asignaciones_by_alumno(session: Session, rut_alumno: str) -> list[Asign
 
 def get_asignacion(session: Session, rut_alumno: str, n_bloque: int) -> Asignacion | None:
     return session.get(Asignacion, (rut_alumno, n_bloque))
+
+
+def get_asignacion_by_alumno_prueba(
+    session: Session,
+    rut_alumno: str,
+    id_evaluacion: int,
+) -> Asignacion | None:
+    statement = (
+        select(Asignacion)
+        .where(Asignacion.rut_alumno == rut_alumno)
+        .where(Asignacion.id_evaluacion == id_evaluacion)
+    )
+    return session.exec(statement).first()
 
 
 def create_asignacion(session: Session, data: AsignacionCreate) -> Asignacion:

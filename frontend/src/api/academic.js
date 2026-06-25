@@ -34,12 +34,26 @@ export function listPruebas() {
   return fetchJson("/api/pruebas");
 }
 
+export function createPrueba(pruebaData) {
+  return fetchJson("/api/pruebas", {
+    method: "POST",
+    body: JSON.stringify(pruebaData),
+  });
+}
+
 export function listSalas() {
   return fetchJson("/api/salas");
 }
 
 export function listUsoSala() {
   return fetchJson("/api/uso-sala");
+}
+
+export function createUsoSala(usoSalaData) {
+  return fetchJson("/api/uso-sala", {
+    method: "POST",
+    body: JSON.stringify(usoSalaData),
+  });
 }
 
 export function listAsignaciones() {
@@ -50,6 +64,13 @@ export function createAsignacion(asignacionData) {
   return fetchJson("/api/asignaciones", {
     method: "POST",
     body: JSON.stringify(asignacionData),
+  });
+}
+
+export function createAsignacionesCurso(asignacionCursoData) {
+  return fetchJson("/api/asignaciones/curso", {
+    method: "POST",
+    body: JSON.stringify(asignacionCursoData),
   });
 }
 

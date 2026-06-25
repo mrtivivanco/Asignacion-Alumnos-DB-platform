@@ -41,7 +41,19 @@ function usoSalaKey(uso) {
 }
 
 function usoSalaLabel(uso) {
-  return `${uso.prueba.nombre} · Bloque ${uso.n_bloque} · ${uso.sala.id_sala}`;
+  return `${uso.prueba.nombre} | B${uso.n_bloque} | ${uso.sala.id_sala}`;
+}
+
+function cursoLabel(curso) {
+  return `${curso.nombre} · Seccion ${curso.seccion}`;
+}
+
+function bloqueLabel(bloque) {
+  return `B${bloque.n_bloque} · ${bloque.dia} ${formatTime(bloque.hora_inicio)}-${formatTime(bloque.hora_fin)}`;
+}
+
+function salaLabel(sala) {
+  return `${sala.id_sala} · cupo ${sala.cupo}`;
 }
 
 export function setStatusMessage(message) {
@@ -68,7 +80,7 @@ export function renderAsignaciones(asignaciones) {
           </div>
           <div class="mt-3 grid gap-2 border-l-4 border-[#E5A93C] pl-3 text-sm font-bold text-[#333333] sm:grid-cols-2">
             <span>${escapeHtml(asignacion.prueba.curso.nombre)} · Seccion ${escapeHtml(asignacion.prueba.curso.seccion)}</span>
-            <span>${escapeHtml(asignacion.sala.edificio)} · Sala ${escapeHtml(asignacion.sala.id_sala)}</span>
+            <span>Sala ${escapeHtml(asignacion.sala.id_sala)}</span>
             <span>${escapeHtml(asignacion.bloque.dia)} ${formatDate(asignacion.bloque.fecha)}</span>
             <span>${formatTime(asignacion.bloque.hora_inicio)}-${formatTime(asignacion.bloque.hora_fin)}</span>
           </div>
@@ -100,7 +112,9 @@ export function renderAlumnos(alumnos) {
 
 export function renderSelects(state) {
   fillSelect("#alumno-carrera", state.carreras, (carrera) => carrera.id_carrera, (carrera) => carrera.nombre);
-  fillSelect("#asignacion-alumno", state.alumnos, (alumno) => alumno.rut, alumnoLabel);
+  fillSelect("#prueba-curso", state.cursos, (curso) => curso.id_curso, cursoLabel);
+  fillSelect("#prueba-sala", state.salas, (sala) => sala.id_sala, salaLabel);
+  fillSelect("#prueba-bloque", state.bloques, (bloque) => bloque.n_bloque, bloqueLabel);
   fillSelect("#asignacion-uso-sala", state.usoSala, usoSalaKey, usoSalaLabel);
   fillSelect("#asignaciones-by-alumno-select", state.alumnos, (alumno) => alumno.rut, alumnoLabel);
 }

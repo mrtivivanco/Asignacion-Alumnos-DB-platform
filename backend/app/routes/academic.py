@@ -11,6 +11,8 @@ from ..db.dto import (
     AlumnoCreate,
     AlumnoRead,
     AsignacionCreate,
+    AsignacionCursoCreate,
+    AsignacionCursoResult,
     AsignacionRead,
     BloqueCreate,
     BloqueRead,
@@ -87,13 +89,13 @@ def create_alumno_carrera(data: AlumnoCarreraCreate, session: SessionDep):
 
 @router.get("/cursos", response_model=list[CursoRead])
 def list_cursos(session: SessionDep):
-    return [crud.curso_to_read(curso) for curso in crud.list_cursos(session)]
+    return [crud.curso_to_read(session, curso) for curso in crud.list_cursos(session)]
 
 
 @router.post("/cursos", response_model=CursoRead, status_code=status.HTTP_201_CREATED)
 def create_curso(curso_data: CursoCreate, session: SessionDep):
     curso = conflict_safe(session, lambda: crud.create_curso(session, curso_data))
-    return crud.curso_to_read(curso)
+    return crud.curso_to_read(session, curso)
 
 
 @router.get("/inscripciones", response_model=list[InscripcionRead])
@@ -165,9 +167,15 @@ def list_asignaciones(session: SessionDep):
 @router.post("/asignaciones", response_model=AsignacionRead, status_code=status.HTTP_201_CREATED)
 def create_asignacion(data: AsignacionCreate, session: SessionDep):
     require_exists(session, Alumno, data.rut_alumno, "Alumno")
-    require_exists(session, Prueba, data.id_evaluacion, "Prueba")
+    prueba = require_exists(session, Prueba, data.id_evaluacion, "Prueba")
     require_exists(session, Sala, data.id_sala, "Sala")
     require_exists(session, Bloque, data.n_bloque, "Bloque")
+
+    if not crud.alumno_is_inscrito_en_curso(session, data.rut_alumno, prueba.id_curso):
+        raise HTTPException(
+            status_code=409,
+            detail="El alumno no esta inscrito en el curso asociado a esta prueba",
+        )
 
     if crud.get_uso_sala(session, data.id_evaluacion, data.id_sala, data.n_bloque) is None:
         raise HTTPException(
@@ -177,6 +185,69 @@ def create_asignacion(data: AsignacionCreate, session: SessionDep):
 
     asignacion = conflict_safe(session, lambda: crud.create_asignacion(session, data))
     return crud.asignacion_to_read(session, asignacion)
+
+
+@router.post("/asignaciones/curso", response_model=AsignacionCursoResult, status_code=status.HTTP_201_CREATED)
+def create_asignaciones_curso(data: AsignacionCursoCreate, session: SessionDep):
+    prueba = require_exists(session, Prueba, data.id_evaluacion, "Prueba")
+    require_exists(session, Sala, data.id_sala, "Sala")
+    require_exists(session, Bloque, data.n_bloque, "Bloque")
+
+    if crud.get_uso_sala(session, data.id_evaluacion, data.id_sala, data.n_bloque) is None:
+        raise HTTPException(
+            status_code=409,
+            detail="La prueba no tiene habilitada esa sala en ese bloque",
+        )
+
+    inscripciones = crud.list_inscripciones_by_curso(session, prueba.id_curso)
+    conflictos = []
+
+    for inscripcion in inscripciones:
+        rut = inscripcion.rut_alumno
+        if crud.get_asignacion(session, rut, data.n_bloque) is not None:
+            conflictos.append(f"{rut}: ya tiene una prueba asignada en el bloque {data.n_bloque}")
+
+        if crud.get_asignacion_by_alumno_prueba(session, rut, data.id_evaluacion) is not None:
+            conflictos.append(f"{rut}: ya estaba asignado a esta prueba")
+
+    if conflictos:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "message": "La prueba no se puede asignar en este horario porque produce solapamientos",
+                "conflictos": conflictos,
+            },
+        )
+
+    asignadas = []
+
+    for inscripcion in inscripciones:
+        rut = inscripcion.rut_alumno
+        asignacion = conflict_safe(
+            session,
+            lambda rut_alumno=rut: crud.create_asignacion(
+                session,
+                AsignacionCreate(
+                    rut_alumno=rut_alumno,
+                    n_bloque=data.n_bloque,
+                    id_evaluacion=data.id_evaluacion,
+                    id_sala=data.id_sala,
+                ),
+            ),
+        )
+        asignadas.append(crud.asignacion_to_read(session, asignacion))
+
+    return AsignacionCursoResult(
+        id_evaluacion=data.id_evaluacion,
+        id_curso=prueba.id_curso,
+        n_bloque=data.n_bloque,
+        id_sala=data.id_sala,
+        total_inscritos=len(inscripciones),
+        total_asignados=len(asignadas),
+        total_conflictos=0,
+        asignaciones=asignadas,
+        conflictos=[],
+    )
 
 
 @router.get("/alumnos/{rut_alumno}/asignaciones", response_model=list[AsignacionRead])

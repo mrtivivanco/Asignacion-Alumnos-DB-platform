@@ -31,7 +31,7 @@
               Consulta y carga de pruebas asignadas a alumnos
             </h1>
             <p class="mt-5 max-w-2xl text-base leading-7 text-[#404040] sm:text-lg">
-              Panel de simulacion para revisar datos academicos desde una API:
+              Panel para revisar datos academicos desde una API:
               alumnos, pruebas, categorias y asignaciones conectadas a PostgreSQL.
             </p>
           </div>
@@ -48,7 +48,7 @@
               </div>
               <div class="rounded-md bg-mist p-3">
                 <p class="text-2xl font-black" id="assignment-count">0</p>
-                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Pruebas</p>
+                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Asignaciones</p>
               </div>
               <div class="rounded-md bg-mist p-3">
                 <p class="text-2xl font-black" id="block-count">0</p>
@@ -60,8 +60,8 @@
       </section>
 
       <section class="bg-mist">
-        <div class="mx-auto grid max-w-7xl gap-5 px-5 py-8 sm:px-8 lg:grid-cols-2 lg:px-10">
-          <article class="panel rounded-lg p-6">
+        <div class="mx-auto grid max-w-7xl gap-5 px-5 py-8 sm:px-8 lg:grid-cols-3 lg:px-10">
+          <article class="panel min-w-0 rounded-lg p-6">
             <div class="mb-5 flex items-start justify-between gap-4">
               <div>
                 <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Nuevo alumno</p>
@@ -98,25 +98,65 @@
             </form>
           </article>
 
-          <article class="panel rounded-lg p-6">
+          <article class="panel min-w-0 rounded-lg p-6">
             <div class="mb-5 flex items-start justify-between gap-4">
               <div>
-                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Nueva asignacion</p>
-                <h2 class="mt-1 text-2xl font-black tracking-tight">Asignar prueba</h2>
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Nueva prueba</p>
+                <h2 class="mt-1 text-2xl font-black tracking-tight">Crear prueba y horario</h2>
               </div>
             </div>
-            <form id="asignacion-form" class="grid gap-4">
+            <form id="prueba-form" class="grid gap-4">
               <label class="grid gap-2 text-sm font-bold text-[#333333]">
-                Alumno
-                <select class="field rounded-md px-4 py-3" name="rut_alumno" id="asignacion-alumno" required></select>
+                Curso al que pertenece
+                <select class="field rounded-md px-4 py-3" name="id_curso" id="prueba-curso" required></select>
               </label>
 
               <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                Nombre de la prueba
+                <input class="field rounded-md px-4 py-3" name="nombre" type="text" placeholder="Prueba Extraordinaria SQL II" required />
+              </label>
+
+              <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                Anio
+                <input class="field rounded-md px-4 py-3" name="anio_creacion" type="number" min="2000" max="2100" value="2026" required />
+              </label>
+
+              <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                Sala
+                <select class="field rounded-md px-4 py-3" name="id_sala" id="prueba-sala" required></select>
+              </label>
+
+              <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                Bloque extraordinario
+                <select class="field rounded-md px-4 py-3" name="n_bloque" id="prueba-bloque" required></select>
+              </label>
+
+              <p class="text-sm leading-6 text-[#555555]">
+                Esto solo crea la prueba y reserva su sala/bloque. Aun no asigna alumnos.
+              </p>
+
+              <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" type="submit">Crear prueba</button>
+            </form>
+          </article>
+
+          <article class="panel min-w-0 rounded-lg p-6">
+            <div class="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Asignacion a alumnos</p>
+                <h2 class="mt-1 text-2xl font-black tracking-tight">Generar asignaciones</h2>
+              </div>
+            </div>
+            <form id="asignacion-form" class="grid min-w-0 gap-4">
+              <label class="grid min-w-0 gap-2 text-sm font-bold text-[#333333]">
                 Prueba, sala y bloque
                 <select class="field rounded-md px-4 py-3" name="uso_sala_key" id="asignacion-uso-sala" required></select>
               </label>
 
-              <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" type="submit">Asignar prueba</button>
+              <p class="text-sm leading-6 text-[#555555]">
+                Se asignara automaticamente a todos los alumnos inscritos en el curso de la prueba. Si alguno ya tiene una prueba en ese bloque, no se asigna la prueba en ese horario.
+              </p>
+
+              <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" type="submit">Generar asignaciones</button>
             </form>
           </article>
         </div>
@@ -148,22 +188,30 @@
       <section class="border-t border-[#e6e6e6] bg-mist">
         <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
           <article class="panel rounded-lg p-6">
-            <div class="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-              <div>
-                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Consulta por alumno</p>
-                <h2 class="mt-1 text-2xl font-black tracking-tight">Ver pruebas asignadas</h2>
-                <p class="mt-3 text-sm leading-6 text-[#555555]">
-                  Selecciona un alumno para consultar sus pruebas asociadas desde la API.
-                </p>
-              </div>
-              <div>
-                <div class="grid gap-3 sm:grid-cols-[1fr_auto]">
-                  <select class="field rounded-md px-4 py-3" id="asignaciones-by-alumno-select"></select>
-                  <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" id="load-alumno-asignaciones" type="button">Consultar</button>
+            <details class="group">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
+                <div>
+                  <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Consulta por alumno</p>
+                  <h2 class="mt-1 text-2xl font-black tracking-tight">Ver pruebas asignadas</h2>
                 </div>
-                <ul id="alumno-asignacion-list" class="mt-5 grid gap-3"></ul>
+                <span class="rounded-md bg-electric px-3 py-2 text-sm font-black text-white group-open:hidden">Abrir</span>
+                <span class="hidden rounded-md bg-black px-3 py-2 text-sm font-black text-white group-open:inline">Cerrar</span>
+              </summary>
+              <div class="mt-5 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
+                <div>
+                  <p class="text-sm leading-6 text-[#555555]">
+                    Selecciona un alumno para consultar sus pruebas asociadas desde la API.
+                  </p>
+                </div>
+                <div class="min-w-0">
+                  <div class="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+                    <select class="field rounded-md px-4 py-3" id="asignaciones-by-alumno-select"></select>
+                    <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" id="load-alumno-asignaciones" type="button">Consultar</button>
+                  </div>
+                  <ul id="alumno-asignacion-list" class="mt-5 grid max-h-80 gap-3 overflow-auto pr-1"></ul>
+                </div>
               </div>
-            </div>
+            </details>
           </article>
         </div>
       </section>

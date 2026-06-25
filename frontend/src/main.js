@@ -39,7 +39,7 @@ function showError(error) {
   setStatusMessage(`No se pudo completar la solicitud: ${error.message}`);
 }
 
-bindFormHandlers({ loadData, showError });
+bindFormHandlers({ loadData, showError, setStatusMessage });
 
 loadData().catch((error) => {
   setStatusMessage(`No se pudieron cargar los datos de la API: ${error.message}`);

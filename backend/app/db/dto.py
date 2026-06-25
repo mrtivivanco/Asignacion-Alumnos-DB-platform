@@ -1,6 +1,15 @@
 from datetime import date, datetime, time
 
+from pydantic import model_validator
 from sqlmodel import Field, SQLModel
+
+
+EXTRAORDINARY_SCHEDULES = {
+    ("Martes", time(18, 0), time(20, 0)),
+    ("Jueves", time(18, 0), time(20, 0)),
+    ("Sabado", time(9, 0), time(11, 0)),
+    ("Sabado", time(11, 0), time(13, 0)),
+}
 
 
 class AlumnoCreate(SQLModel):
@@ -61,6 +70,18 @@ class BloqueCreate(SQLModel):
     hora_inicio: time
     hora_fin: time
 
+    @model_validator(mode="after")
+    def validate_extraordinary_schedule(self):
+        normalized_day = self.dia.strip().capitalize()
+        schedule = (normalized_day, self.hora_inicio, self.hora_fin)
+        if schedule not in EXTRAORDINARY_SCHEDULES:
+            raise ValueError(
+                "Los bloques solo pueden ser Martes 18:00-20:00, "
+                "Jueves 18:00-20:00, Sabado 09:00-11:00 o Sabado 11:00-13:00"
+            )
+        self.dia = normalized_day
+        return self
+
 
 class BloqueRead(BloqueCreate):
     pass
@@ -115,3 +136,21 @@ class AsignacionRead(AsignacionCreate):
     prueba: PruebaRead
     sala: SalaRead
     bloque: BloqueRead
+
+
+class AsignacionCursoCreate(SQLModel):
+    id_evaluacion: int
+    id_sala: str
+    n_bloque: int
+
+
+class AsignacionCursoResult(SQLModel):
+    id_evaluacion: int
+    id_curso: int
+    n_bloque: int
+    id_sala: str
+    total_inscritos: int
+    total_asignados: int
+    total_conflictos: int
+    asignaciones: list[AsignacionRead]
+    conflictos: list[str]
