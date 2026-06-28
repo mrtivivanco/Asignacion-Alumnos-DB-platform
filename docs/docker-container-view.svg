@@ -1,0 +1,258 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="1650" viewBox="0 0 1900 4125" role="img" aria-labelledby="title desc">
+  <title id="title">Docker container view</title>
+  <desc id="desc">Docker Compose container flow from user browser through frontend, API, and PostgreSQL containers, plus the links helper container.</desc>
+
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto" markerUnits="strokeWidth" viewBox="0 0 12 12">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#334155" />
+    </marker>
+
+    <marker id="arrow-response" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto" markerUnits="strokeWidth" viewBox="0 0 12 12">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#7c3aed" />
+    </marker>
+
+    <marker id="arrow-helper" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto" markerUnits="strokeWidth" viewBox="0 0 12 12">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#0f766e" />
+    </marker>
+
+    <style>
+      .canvas {
+        fill: #ffffff;
+      }
+
+      .frontend-container {
+        fill: #eff6ff;
+        stroke: #60a5fa;
+        stroke-dasharray: 12 10;
+        stroke-width: 2.5;
+      }
+
+      .api-container {
+        fill: #ecfdf5;
+        stroke: #34d399;
+        stroke-dasharray: 12 10;
+        stroke-width: 2.5;
+      }
+
+      .postgres-container {
+        fill: #fff7ed;
+        stroke: #fb923c;
+        stroke-dasharray: 12 10;
+        stroke-width: 2.5;
+      }
+
+      .helper-container {
+        fill: #f0fdfa;
+        stroke: #2dd4bf;
+        stroke-dasharray: 12 10;
+        stroke-width: 2.5;
+      }
+
+      .box,
+      .db {
+        fill: #ffffff;
+        stroke: #94a3b8;
+        stroke-width: 3;
+      }
+
+      .container-title,
+      .node-label,
+      .node-subtitle,
+      .edge-label {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        fill: #0f172a;
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
+
+      .container-title {
+        font-size: 25px;
+        font-weight: 700;
+        fill: #334155;
+      }
+
+      .node-label {
+        font-size: 30px;
+        font-weight: 650;
+      }
+
+      .node-subtitle {
+        font-size: 21px;
+        font-weight: 500;
+      }
+
+      .edge {
+        fill: none;
+        stroke: #334155;
+        stroke-width: 3;
+        marker-end: url(#arrow);
+      }
+
+      .response-edge {
+        fill: none;
+        stroke: #7c3aed;
+        stroke-dasharray: 12 10;
+        stroke-width: 3;
+        marker-end: url(#arrow-response);
+      }
+
+      .helper-edge {
+        fill: none;
+        stroke: #0f766e;
+        stroke-dasharray: 12 10;
+        stroke-width: 3;
+        marker-end: url(#arrow-helper);
+      }
+
+      .label-bg {
+        fill: #ffffff;
+        stroke: #cbd5e1;
+        stroke-width: 1.8;
+      }
+
+      .response-label-bg {
+        fill: #faf5ff;
+        stroke: #a78bfa;
+        stroke-dasharray: 12 10;
+        stroke-width: 1.8;
+      }
+
+      .helper-label-bg {
+        fill: #f0fdfa;
+        stroke: #2dd4bf;
+        stroke-dasharray: 12 10;
+        stroke-width: 1.8;
+      }
+
+      .edge-label {
+        font-size: 20px;
+        font-weight: 500;
+        fill: #334155;
+      }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1900" height="4125" />
+
+  <!-- Links helper -->
+  <rect class="helper-container" x="1390" y="60" width="360" height="260" rx="22" />
+  <text class="container-title" x="1570" y="115">links helper</text>
+  <rect class="box" x="1445" y="180" width="250" height="110" rx="14" />
+  <text class="node-label" x="1570" y="216">Prints</text>
+  <text class="node-subtitle" x="1570" y="254">local URLs</text>
+
+  <path class="helper-edge" d="M 1445 235 L 1110 235" />
+  <rect class="helper-label-bg" x="1165" y="210" width="185" height="50" />
+  <text class="edge-label" x="1257.5" y="235">logs URLs</text>
+
+  <!-- Main app flow -->
+  <g transform="translate(0 125)">
+  <!-- User and browser -->
+  <rect class="box" x="790" y="60" width="320" height="100" rx="14" />
+  <text class="node-label" x="950" y="110">User</text>
+
+  <rect class="box" x="740" y="330" width="420" height="110" rx="14" />
+  <text class="node-label" x="950" y="385">Browser</text>
+
+  <path class="edge" d="M 790 160 L 790 330" />
+  <rect class="label-bg" x="670" y="220" width="240" height="50" />
+  <text class="edge-label" x="790" y="245">uses app</text>
+
+  <path class="response-edge" d="M 1110 330 L 1110 160" />
+  <rect class="response-label-bg" x="980" y="220" width="260" height="50" />
+  <text class="edge-label" x="1110" y="245">page updates</text>
+
+  <!-- Frontend container -->
+  <rect class="frontend-container" x="500" y="620" width="900" height="1050" rx="28" />
+  <text class="container-title" x="650" y="685">frontend container</text>
+
+  <rect class="box" x="710" y="790" width="480" height="130" rx="14" />
+  <text class="node-label" x="950" y="855">Vite server</text>
+
+  <rect class="box" x="710" y="1110" width="480" height="145" rx="14" />
+  <text class="node-label" x="950" y="1160">HTML + JS modules</text>
+  <text class="node-subtitle" x="950" y="1205">Tailwind CSS</text>
+
+  <rect class="box" x="710" y="1430" width="480" height="145" rx="14" />
+  <text class="node-label" x="950" y="1480">Vite proxy</text>
+  <text class="node-subtitle" x="950" y="1525">for /api/*</text>
+
+  <path class="edge" d="M 790 440 L 790 790" />
+  <rect class="label-bg" x="610" y="535" width="360" height="50" />
+  <text class="edge-label" x="790" y="560">opens localhost:8080</text>
+
+  <path class="response-edge" d="M 1110 790 L 1110 440" />
+  <rect class="response-label-bg" x="990" y="535" width="240" height="50" />
+  <text class="edge-label" x="1110" y="560">browser updates</text>
+
+  <path class="edge" d="M 790 920 L 790 1110" />
+  <rect class="label-bg" x="650" y="990" width="280" height="50" />
+  <text class="edge-label" x="790" y="1015">serves app files</text>
+
+  <path class="response-edge" d="M 1110 1110 L 1110 920" />
+  <rect class="response-label-bg" x="990" y="990" width="240" height="50" />
+  <text class="edge-label" x="1110" y="1015">rendered UI</text>
+
+  <path class="edge" d="M 790 1255 L 790 1430" />
+  <rect class="label-bg" x="680" y="1315" width="220" height="50" />
+  <text class="edge-label" x="790" y="1340">fetch /api/*</text>
+
+  <path class="response-edge" d="M 1110 1430 L 1110 1255" />
+  <rect class="response-label-bg" x="1010" y="1315" width="200" height="50" />
+  <text class="edge-label" x="1110" y="1340">API data</text>
+
+  <!-- API container -->
+  <rect class="api-container" x="500" y="1990" width="900" height="980" rx="28" />
+  <text class="container-title" x="620" y="2055">api container</text>
+
+  <rect class="box" x="710" y="2160" width="480" height="130" rx="14" />
+  <text class="node-label" x="950" y="2225">FastAPI server</text>
+
+  <rect class="box" x="710" y="2470" width="480" height="145" rx="14" />
+  <text class="node-label" x="950" y="2520">Routes + CRUD</text>
+  <text class="node-subtitle" x="950" y="2565">DTOs</text>
+
+  <rect class="box" x="710" y="2780" width="480" height="130" rx="14" />
+  <text class="node-label" x="950" y="2845">SQLModel</text>
+
+  <path class="edge" d="M 790 1575 L 790 2160" />
+  <rect class="label-bg" x="615" y="1815" width="350" height="50" />
+  <text class="edge-label" x="790" y="1840">forwards to api:8000</text>
+
+  <path class="response-edge" d="M 1110 2160 L 1110 1575" />
+  <rect class="response-label-bg" x="1000" y="1815" width="220" height="50" />
+  <text class="edge-label" x="1110" y="1840">proxied JSON</text>
+
+  <path class="edge" d="M 790 2290 L 790 2470" />
+  <rect class="label-bg" x="645" y="2355" width="290" height="50" />
+  <text class="edge-label" x="790" y="2380">dispatches request</text>
+
+  <path class="response-edge" d="M 1110 2470 L 1110 2290" />
+  <rect class="response-label-bg" x="1000" y="2355" width="220" height="50" />
+  <text class="edge-label" x="1110" y="2380">JSON response</text>
+
+  <path class="edge" d="M 790 2615 L 790 2780" />
+  <rect class="label-bg" x="650" y="2670" width="280" height="50" />
+  <text class="edge-label" x="790" y="2695">uses table models</text>
+
+  <path class="response-edge" d="M 1110 2780 L 1110 2615" />
+  <rect class="response-label-bg" x="990" y="2670" width="240" height="50" />
+  <text class="edge-label" x="1110" y="2695">model objects</text>
+
+  <!-- PostgreSQL container -->
+  <rect class="postgres-container" x="500" y="3180" width="900" height="520" rx="28" />
+  <text class="container-title" x="640" y="3245">postgres container</text>
+
+  <path class="db" d="M 570 3465 C 570 3410 1330 3410 1330 3465 L 1330 3615 C 1330 3670 570 3670 570 3615 Z" />
+  <ellipse class="db" cx="950" cy="3465" rx="380" ry="55" />
+  <text class="node-label" x="950" y="3550">PostgreSQL data</text>
+
+  <path class="edge" d="M 790 2910 L 790 3410" />
+  <rect class="label-bg" x="650" y="3065" width="280" height="50" />
+  <text class="edge-label" x="790" y="3090">SQL queries</text>
+
+  <path class="response-edge" d="M 1110 3410 L 1110 2910" />
+  <rect class="response-label-bg" x="1000" y="3065" width="220" height="50" />
+  <text class="edge-label" x="1110" y="3090">result rows</text>
+  </g>
+</svg>
