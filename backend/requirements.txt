@@ -4,3 +4,6 @@ sqlmodel>=0.0.22,<0.1
 psycopg[binary]>=3.2,<4.0
 Faker>=33.0,<34.0
 python-dotenv>=1.0,<2.0
+pymongo>=4.10,<5.0
+python-multipart>=0.0.17,<1.0
+reportlab>=4.2,<5.0

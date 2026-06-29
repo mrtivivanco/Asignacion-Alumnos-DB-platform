@@ -1,30 +1,36 @@
 export const state = {
-  alumnos: [],
-  carreras: [],
-  cursos: [],
-  bloques: [],
-  pruebas: [],
-  salas: [],
-  usoSala: [],
-  asignaciones: [],
+  students: [],
+  degreePrograms: [],
+  courseSections: [],
+  examBlocks: [],
+  exams: [],
+  rooms: [],
+  examRoomAssignments: [],
+  studentExamAssignments: [],
+  assignmentConflicts: [],
+  examPdfMetadata: {},
 };
 
 export function setReferenceData({
-  alumnos,
-  carreras,
-  cursos,
-  bloques,
-  pruebas,
-  salas,
-  usoSala,
-  asignaciones,
+  students,
+  degreePrograms,
+  courseSections,
+  examBlocks,
+  exams,
+  rooms,
+  examRoomAssignments,
+  studentExamAssignments,
+  assignmentConflicts = [],
+  examPdfMetadata = {},
 }) {
-  state.alumnos = alumnos;
-  state.carreras = carreras;
-  state.cursos = cursos;
-  state.bloques = bloques;
-  state.pruebas = pruebas;
-  state.salas = salas;
-  state.usoSala = usoSala;
-  state.asignaciones = asignaciones;
+  state.students = students;
+  state.degreePrograms = degreePrograms;
+  state.courseSections = courseSections;
+  state.examBlocks = examBlocks;
+  state.exams = exams;
+  state.rooms = rooms;
+  state.examRoomAssignments = examRoomAssignments;
+  state.studentExamAssignments = studentExamAssignments;
+  state.assignmentConflicts = assignmentConflicts;
+  state.examPdfMetadata = examPdfMetadata;
 }

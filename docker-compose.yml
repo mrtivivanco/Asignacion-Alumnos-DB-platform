@@ -15,6 +15,18 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  mongo:
+    image: mongo:7
+    ports:
+      - "${MONGO_HOST_PORT:?Create .env from .env.example and set MONGO_HOST_PORT}:${MONGO_INTERNAL_PORT:?Create .env from .env.example and set MONGO_INTERNAL_PORT}"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - mongo_data:/data/db
+
   api:
     build:
       context: .
@@ -25,10 +37,15 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Create .env from .env.example and set POSTGRES_PASSWORD}
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
+      MONGO_URI: mongodb://mongo:${MONGO_INTERNAL_PORT:?Create .env from .env.example and set MONGO_INTERNAL_PORT}
+      MONGO_DB: ${MONGO_DB:?Create .env from .env.example and set MONGO_DB}
+      MONGO_GRIDFS_BUCKET: ${MONGO_GRIDFS_BUCKET:?Create .env from .env.example and set MONGO_GRIDFS_BUCKET}
     ports:
       - "${API_PORT:?Create .env from .env.example and set API_PORT}:${API_INTERNAL_PORT:?Create .env from .env.example and set API_INTERNAL_PORT}"
     depends_on:
       postgres:
+        condition: service_healthy
+      mongo:
         condition: service_healthy
     volumes:
       - ./backend/app:/app/app
@@ -73,9 +90,11 @@ services:
         printf '  API docs:              http://localhost:${API_PORT}/docs\n'
         printf '  API docs via frontend: http://localhost:${FRONTEND_PORT}/docs\n'
         printf '  Health check:          http://localhost:${API_PORT}/health\n'
-        printf '  PostgreSQL:            localhost:${POSTGRES_HOST_PORT}\n\n'
+        printf '  PostgreSQL:            localhost:${POSTGRES_HOST_PORT}\n'
+        printf '  MongoDB:               localhost:${MONGO_HOST_PORT}\n\n'
     restart: "no"
 
 volumes:
   postgres_data:
+  mongo_data:
   frontend_node_modules:

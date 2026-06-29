@@ -5,7 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Asignacion de Pruebas UAI</title>
   </head>
-  <body class="min-h-screen bg-paper text-ink antialiased">
+  <body class="min-h-screen bg-paper text-ink antialiased lg:pl-72">
+    <div id="sidebar-backdrop" class="sidebar-backdrop" hidden></div>
+
+    <aside id="app-sidebar" class="sidebar-shell" aria-label="Navegacion principal" data-open="false">
+      <div class="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4">
+        <a class="flex min-w-0 items-center gap-3" href="#dashboard" data-page-link="dashboard">
+          <img class="h-11 w-auto max-w-[190px] object-contain" src="/uai-logo.png" alt="Universidad Adolfo Ibanez" />
+        </a>
+        <button id="sidebar-close" class="rounded-md border border-white/15 px-3 py-2 text-sm font-black text-white lg:hidden" type="button">
+          Cerrar
+        </button>
+      </div>
+
+      <div class="min-h-0 flex-1 overflow-y-auto px-4 py-5">
+        <p class="mb-4 px-2 text-xs font-black uppercase tracking-[0.18em] text-white/50">Navegacion</p>
+
+        <nav class="grid gap-3">
+          <div class="sidebar-section" data-sidebar-section>
+            <button class="sidebar-section-toggle" type="button" aria-expanded="true" data-sidebar-toggle>
+              <span>Resumen</span>
+              <span aria-hidden="true">v</span>
+            </button>
+            <div class="sidebar-section-panel" data-sidebar-panel>
+              <a class="sidebar-link" href="#dashboard" data-page-link="dashboard">Panel general</a>
+            </div>
+          </div>
+
+          <div class="sidebar-section" data-sidebar-section>
+            <button class="sidebar-section-toggle" type="button" aria-expanded="true" data-sidebar-toggle>
+              <span>Alumnos</span>
+              <span aria-hidden="true">v</span>
+            </button>
+            <div class="sidebar-section-panel" data-sidebar-panel>
+              <a class="sidebar-link" href="#students-register" data-page-link="students-register">Registrar alumno</a>
+              <a class="sidebar-link" href="#students-directory" data-page-link="students-directory">Directorio de alumnos</a>
+              <a class="sidebar-link" href="#students-assignments" data-page-link="students-assignments">Consulta de asignaciones</a>
+            </div>
+          </div>
+
+          <div class="sidebar-section" data-sidebar-section>
+            <button class="sidebar-section-toggle" type="button" aria-expanded="true" data-sidebar-toggle>
+              <span>Pruebas</span>
+              <span aria-hidden="true">v</span>
+            </button>
+            <div class="sidebar-section-panel" data-sidebar-panel>
+              <a class="sidebar-link" href="#exams-create" data-page-link="exams-create">Crear prueba</a>
+              <a class="sidebar-link" href="#exams-room-block" data-page-link="exams-room-block">Reservar sala y bloque</a>
+              <a class="sidebar-link" href="#exams-pdfs" data-page-link="exams-pdfs">PDFs de pruebas</a>
+            </div>
+          </div>
+
+          <div class="sidebar-section" data-sidebar-section>
+            <button class="sidebar-section-toggle" type="button" aria-expanded="true" data-sidebar-toggle>
+              <span>Asignaciones</span>
+              <span aria-hidden="true">v</span>
+            </button>
+            <div class="sidebar-section-panel" data-sidebar-panel>
+              <a class="sidebar-link" href="#assignments-generate" data-page-link="assignments-generate">Generar asignaciones</a>
+              <a class="sidebar-link" href="#assignments-list" data-page-link="assignments-list">Pruebas asignadas</a>
+              <a class="sidebar-link" href="#assignments-conflicts" data-page-link="assignments-conflicts">Conflictos de asignacion</a>
+            </div>
+          </div>
+
+          <div class="sidebar-section" data-sidebar-section>
+            <button class="sidebar-section-toggle" type="button" aria-expanded="true" data-sidebar-toggle>
+              <span>Datos academicos</span>
+              <span aria-hidden="true">v</span>
+            </button>
+            <div class="sidebar-section-panel" data-sidebar-panel>
+              <a class="sidebar-link" href="#academic-programs" data-page-link="academic-programs">Carreras</a>
+              <a class="sidebar-link" href="#academic-course-sections" data-page-link="academic-course-sections">Cursos y secciones</a>
+              <a class="sidebar-link" href="#academic-exam-blocks" data-page-link="academic-exam-blocks">Bloques de prueba</a>
+              <a class="sidebar-link" href="#academic-rooms" data-page-link="academic-rooms">Salas</a>
+            </div>
+          </div>
+
+          <div class="sidebar-section" data-sidebar-section>
+            <button class="sidebar-section-toggle" type="button" aria-expanded="true" data-sidebar-toggle>
+              <span>Sistema</span>
+              <span aria-hidden="true">v</span>
+            </button>
+            <div class="sidebar-section-panel" data-sidebar-panel>
+              <a class="sidebar-link" href="/docs">Documentacion API</a>
+              <a class="sidebar-link" href="/health">Estado del servicio</a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </aside>
+
     <header class="bg-ink text-white">
       <div class="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-4 sm:px-8 lg:px-10">
         <a class="flex min-w-0 items-center gap-4" href="/">
@@ -14,75 +103,164 @@
           <span class="hidden text-sm font-bold uppercase tracking-[0.18em] text-white/80 lg:block">Gestion academica</span>
         </a>
         <nav class="flex shrink-0 items-center gap-2">
-          <a class="rounded-md border border-white/20 px-3 py-2 text-sm font-bold text-white transition hover:bg-white/10" href="/docs">API Docs</a>
-          <a class="rounded-md bg-electric px-3 py-2 text-sm font-bold text-white transition hover:bg-[#1878ce]" href="/health">Health</a>
+          <button id="sidebar-toggle" class="rounded-md border border-white/20 px-3 py-2 text-sm font-bold text-white transition hover:bg-white/10 lg:hidden" type="button">Menu</button>
+          <a class="rounded-md border border-white/20 px-3 py-2 text-sm font-bold text-white transition hover:bg-white/10" href="/docs">Documentacion API</a>
+          <a class="rounded-md bg-electric px-3 py-2 text-sm font-bold text-white transition hover:bg-[#1878ce]" href="/health">Estado</a>
         </nav>
       </div>
     </header>
 
-    <main>
-      <section class="border-b border-[#e6e6e6] bg-paper">
-        <div class="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:px-10 lg:py-14">
+    <div id="feedback-panel" class="mx-auto hidden max-w-7xl px-5 pt-5 sm:px-8 lg:px-10" role="status" aria-live="polite">
+      <div class="panel rounded-lg border-l-4 border-electric p-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p class="mb-4 inline-flex rounded-md bg-gold px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-ink">
-              Sistema de asignaciones
-            </p>
-            <h1 class="max-w-4xl text-4xl font-black leading-tight text-ink sm:text-5xl lg:text-6xl">
-              Consulta y carga de pruebas asignadas a alumnos
-            </h1>
-            <p class="mt-5 max-w-2xl text-base leading-7 text-[#404040] sm:text-lg">
-              Panel para revisar datos academicos desde una API:
-              alumnos, pruebas, categorias y asignaciones conectadas a PostgreSQL.
-            </p>
+            <p id="feedback-title" class="text-xs font-black uppercase tracking-[0.16em] text-gold">Mensaje del sistema</p>
+            <p id="feedback-message" class="mt-1 text-sm font-bold leading-6 text-[#333333]"></p>
           </div>
-
-          <aside class="panel grid content-between gap-5 rounded-lg p-5">
-            <div>
-              <h2 class="text-xl font-black">Estado de conexion</h2>
-              <p id="status-message" class="mt-2 text-sm leading-6 text-[#555555]">Cargando datos desde la API...</p>
-            </div>
-            <div class="grid grid-cols-3 gap-3">
-              <div class="rounded-md bg-mist p-3">
-                <p class="text-2xl font-black" id="student-count">0</p>
-                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Alumnos</p>
-              </div>
-              <div class="rounded-md bg-mist p-3">
-                <p class="text-2xl font-black" id="assignment-count">0</p>
-                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Asignaciones</p>
-              </div>
-              <div class="rounded-md bg-mist p-3">
-                <p class="text-2xl font-black" id="block-count">0</p>
-                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Bloques</p>
-              </div>
-            </div>
-          </aside>
+          <button id="feedback-close" class="rounded-md border border-[#d9d9d9] bg-white px-3 py-2 text-sm font-black text-[#333333] transition hover:border-electric hover:text-electric" type="button">Cerrar</button>
         </div>
-      </section>
+      </div>
+    </div>
 
-      <section class="bg-mist">
-        <div class="mx-auto grid max-w-7xl gap-5 px-5 py-8 sm:px-8 lg:grid-cols-3 lg:px-10">
-          <article class="panel min-w-0 rounded-lg p-6">
-            <div class="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Nuevo alumno</p>
-                <h2 class="mt-1 text-2xl font-black tracking-tight">Registrar alumno</h2>
-              </div>
+    <main>
+      <div id="page-dashboard" class="page-view" data-page="dashboard">
+        <section class="border-b border-[#e6e6e6] bg-paper">
+          <div class="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:px-10 lg:py-14">
+            <div>
+              <p class="mb-4 inline-flex rounded-md bg-gold px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-ink">
+                Resumen
+              </p>
+              <h1 class="max-w-4xl text-4xl font-black leading-tight text-ink sm:text-5xl lg:text-6xl">
+                Panel de asignacion de pruebas
+              </h1>
+              <p class="mt-5 max-w-2xl text-base leading-7 text-[#404040] sm:text-lg">
+                Revisa los datos academicos, bloques extraordinarios, disponibilidad de salas y estado de asignaciones desde un solo lugar.
+              </p>
             </div>
-            <form id="alumno-form" class="grid gap-4">
+
+            <aside class="panel grid content-between gap-5 rounded-lg p-5">
+              <div>
+                <h2 class="text-xl font-black">Estado del sistema</h2>
+                <p id="status-message" class="mt-2 text-sm leading-6 text-[#555555]">Cargando datos desde la API...</p>
+              </div>
+              <div class="grid gap-3 sm:grid-cols-2">
+                <a class="rounded-md border border-[#e7e7e7] bg-mist px-3 py-2 text-sm font-black text-[#333333] transition hover:border-electric hover:text-electric" href="/docs">Documentacion API</a>
+                <a class="rounded-md bg-electric px-3 py-2 text-sm font-black text-white transition hover:bg-[#1878ce]" href="/health">Estado del servicio</a>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="bg-mist">
+          <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
+              <article class="panel rounded-lg p-5">
+                <p class="text-3xl font-black" id="student-count">0</p>
+                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Alumnos</p>
+              </article>
+              <article class="panel rounded-lg p-5">
+                <p class="text-3xl font-black" id="exam-count">0</p>
+                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Pruebas</p>
+              </article>
+              <article class="panel rounded-lg p-5">
+                <p class="text-3xl font-black" id="assignment-count">0</p>
+                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Asignaciones</p>
+              </article>
+              <article class="panel rounded-lg p-5">
+                <p class="text-3xl font-black" id="block-count">0</p>
+                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Bloques</p>
+              </article>
+              <article class="panel rounded-lg p-5">
+                <p class="text-3xl font-black" id="room-count">0</p>
+                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Salas</p>
+              </article>
+              <article class="panel rounded-lg p-5">
+                <p class="text-3xl font-black" id="course-section-count">0</p>
+                <p class="mt-1 text-xs font-bold uppercase tracking-wide text-[#555555]">Cursos</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="bg-paper">
+          <div class="mx-auto grid max-w-7xl gap-5 px-5 py-8 sm:px-8 lg:grid-cols-[0.85fr_1.15fr] lg:px-10">
+            <article class="panel rounded-lg p-6">
+              <div class="mb-5">
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Flujo</p>
+                <h2 class="mt-1 text-2xl font-black tracking-tight">Acciones rapidas</h2>
+              </div>
+              <div class="grid gap-3 sm:grid-cols-2">
+                <a class="action-button rounded-md px-4 py-3 text-sm font-black uppercase tracking-wide transition" href="#students-register" data-page-link="students-register">Registrar alumno</a>
+                <a class="action-button rounded-md px-4 py-3 text-sm font-black uppercase tracking-wide transition" href="#exams-create" data-page-link="exams-create">Crear prueba</a>
+                <a class="action-button rounded-md px-4 py-3 text-sm font-black uppercase tracking-wide transition" href="#assignments-generate" data-page-link="assignments-generate">Generar asignaciones</a>
+                <a class="rounded-md border border-[#d9d9d9] bg-white px-4 py-3 text-sm font-black uppercase tracking-wide text-[#333333] transition hover:border-electric hover:text-electric" href="#assignments-list" data-page-link="assignments-list">Ver pruebas asignadas</a>
+                <a class="rounded-md border border-[#d9d9d9] bg-white px-4 py-3 text-sm font-black uppercase tracking-wide text-[#333333] transition hover:border-electric hover:text-electric" href="#academic-rooms" data-page-link="academic-rooms">Ver salas</a>
+                <a class="rounded-md border border-[#d9d9d9] bg-white px-4 py-3 text-sm font-black uppercase tracking-wide text-[#333333] transition hover:border-electric hover:text-electric" href="#academic-exam-blocks" data-page-link="academic-exam-blocks">Ver bloques</a>
+              </div>
+            </article>
+
+            <article class="panel rounded-lg p-6">
+              <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Horario</p>
+                  <h2 class="mt-1 text-2xl font-black tracking-tight">Bloques extraordinarios</h2>
+                </div>
+                <span class="rounded-md border-l-4 border-gold bg-mist px-3 py-2 text-xs font-bold uppercase tracking-wide text-[#333333]">Datos en vivo</span>
+              </div>
+              <ul id="dashboard-block-list" class="grid gap-3"></ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="bg-mist">
+          <div class="mx-auto grid max-w-7xl gap-5 px-5 py-8 sm:px-8 lg:grid-cols-2 lg:px-10">
+            <article class="panel rounded-lg p-6">
+              <div class="mb-5">
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Preparacion</p>
+                <h2 class="mt-1 text-2xl font-black tracking-tight">Checklist de datos</h2>
+              </div>
+              <ul id="dashboard-readiness-list" class="grid gap-3"></ul>
+            </article>
+
+            <article class="panel rounded-lg p-6">
+              <div class="mb-5">
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Resumen</p>
+                <h2 class="mt-1 text-2xl font-black tracking-tight">Resumen de asignaciones</h2>
+              </div>
+              <ul id="dashboard-snapshot-list" class="grid gap-3"></ul>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <section id="page-students-register" class="page-view hidden bg-paper" data-page="students-register">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 max-w-2xl">
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Alumnos</p>
+                <h1 class="mt-1 text-3xl font-black tracking-tight">Registrar alumno</h1>
+              <p class="mt-3 text-sm leading-6 text-[#555555]">
+                Crea un registro de alumno y asocialo a una carrera.
+              </p>
+            </div>
+
+            <form id="alumno-form" class="grid max-w-2xl gap-4">
               <label class="grid gap-2 text-sm font-bold text-[#333333]">
-                RUT
+                RUT / ID de alumno
                 <input class="field rounded-md px-4 py-3" name="rut" type="text" placeholder="12345678-9" required />
               </label>
 
-              <label class="grid gap-2 text-sm font-bold text-[#333333]">
-                Nombre
-                <input class="field rounded-md px-4 py-3" name="nombre" type="text" placeholder="Martina" required />
-              </label>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                  Nombre
+                  <input class="field rounded-md px-4 py-3" name="nombre" type="text" placeholder="Martina" required />
+                </label>
 
-              <label class="grid gap-2 text-sm font-bold text-[#333333]">
-                Apellido
-                <input class="field rounded-md px-4 py-3" name="apellido" type="text" placeholder="Perez" required />
-              </label>
+                <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                  Apellido
+                  <input class="field rounded-md px-4 py-3" name="apellido" type="text" placeholder="Perez" required />
+                </label>
+              </div>
 
               <label class="grid gap-2 text-sm font-bold text-[#333333]">
                 Email
@@ -97,63 +275,223 @@
               <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" type="submit">Guardar alumno</button>
             </form>
           </article>
+        </div>
+      </section>
 
-          <article class="panel min-w-0 rounded-lg p-6">
-            <div class="mb-5 flex items-start justify-between gap-4">
+      <section id="page-students-directory" class="page-view hidden bg-paper" data-page="students-directory">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Nueva prueba</p>
-                <h2 class="mt-1 text-2xl font-black tracking-tight">Crear prueba y horario</h2>
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Alumnos</p>
+                <h1 class="mt-1 text-3xl font-black tracking-tight">Directorio de alumnos</h1>
+              </div>
+              <span class="rounded-md border-l-4 border-gold bg-mist px-3 py-2 text-xs font-bold uppercase tracking-wide text-[#333333]">Datos en vivo</span>
+            </div>
+
+            <label class="mb-5 grid gap-2 text-sm font-bold text-[#333333]">
+              Buscar alumnos
+              <input id="student-search" class="field rounded-md px-4 py-3" type="search" placeholder="Buscar por nombre, apellido, RUT o email" />
+            </label>
+            <ul id="alumno-list" class="grid gap-3"></ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="page-students-assignments" class="page-view hidden bg-paper" data-page="students-assignments">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
+              <div>
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Alumnos</p>
+                <h1 class="mt-1 text-3xl font-black tracking-tight">Consulta de asignaciones por alumno</h1>
+                <p class="mt-3 text-sm leading-6 text-[#555555]">
+                  Selecciona un alumno para revisar sus pruebas asignadas.
+                </p>
+              </div>
+
+              <div class="grid min-w-0 content-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+                <select class="field rounded-md px-4 py-3" id="asignaciones-by-alumno-select"></select>
+                <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" id="load-alumno-asignaciones" type="button">Cargar asignaciones</button>
               </div>
             </div>
-            <form id="prueba-form" class="grid gap-4">
+
+            <ul id="alumno-asignacion-list" class="grid max-h-[34rem] gap-3 overflow-auto pr-1"></ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="page-exams-create" class="page-view hidden bg-paper" data-page="exams-create">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 max-w-2xl">
+              <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Pruebas</p>
+              <h1 class="mt-1 text-3xl font-black tracking-tight">Crear prueba</h1>
+              <p class="mt-3 text-sm leading-6 text-[#555555]">
+                Crea una prueba extraordinaria y reserva la sala/bloque que usara. Esto aun no asigna alumnos.
+              </p>
+            </div>
+
+            <form id="prueba-form" class="grid max-w-3xl gap-4">
               <label class="grid gap-2 text-sm font-bold text-[#333333]">
-                Curso al que pertenece
+                Curso / seccion
                 <select class="field rounded-md px-4 py-3" name="id_curso" id="prueba-curso" required></select>
               </label>
 
               <label class="grid gap-2 text-sm font-bold text-[#333333]">
                 Nombre de la prueba
-                <input class="field rounded-md px-4 py-3" name="nombre" type="text" placeholder="Prueba Extraordinaria SQL II" required />
+                <input class="field rounded-md px-4 py-3" name="nombre" type="text" placeholder="Prueba extraordinaria SQL II" required />
               </label>
 
-              <label class="grid gap-2 text-sm font-bold text-[#333333]">
-                Anio
-                <input class="field rounded-md px-4 py-3" name="anio_creacion" type="number" min="2000" max="2100" value="2026" required />
-              </label>
+              <div class="grid gap-4 sm:grid-cols-3">
+                <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                  Anio de creacion
+                  <input class="field rounded-md px-4 py-3" name="anio_creacion" type="number" min="2000" max="2100" value="2026" required />
+                </label>
 
-              <label class="grid gap-2 text-sm font-bold text-[#333333]">
-                Sala
-                <select class="field rounded-md px-4 py-3" name="id_sala" id="prueba-sala" required></select>
-              </label>
+                <label class="grid gap-2 text-sm font-bold text-[#333333] sm:col-span-2">
+                  Sala
+                  <select class="field rounded-md px-4 py-3" name="id_sala" id="prueba-sala" required></select>
+                </label>
+              </div>
 
               <label class="grid gap-2 text-sm font-bold text-[#333333]">
                 Bloque extraordinario
                 <select class="field rounded-md px-4 py-3" name="n_bloque" id="prueba-bloque" required></select>
               </label>
 
-              <p class="text-sm leading-6 text-[#555555]">
-                Esto solo crea la prueba y reserva su sala/bloque. Aun no asigna alumnos.
+              <p class="rounded-md border-l-4 border-gold bg-mist px-4 py-3 text-sm leading-6 text-[#555555]">
+                Flujo actual: este formulario crea la prueba y reserva inmediatamente su sala y bloque.
               </p>
 
               <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" type="submit">Crear prueba</button>
             </form>
           </article>
+        </div>
+      </section>
 
-          <article class="panel min-w-0 rounded-lg p-6">
-            <div class="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Asignacion a alumnos</p>
-                <h2 class="mt-1 text-2xl font-black tracking-tight">Generar asignaciones</h2>
-              </div>
+      <section id="page-exams-room-block" class="page-view hidden bg-paper" data-page="exams-room-block">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 max-w-2xl">
+              <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Pruebas</p>
+              <h1 class="mt-1 text-3xl font-black tracking-tight">Reservar sala y bloque</h1>
+              <p class="mt-3 text-sm leading-6 text-[#555555]">
+                Reserva una sala para una prueba existente en su bloque correspondiente. Esta accion no asigna alumnos.
+              </p>
             </div>
-            <form id="asignacion-form" class="grid min-w-0 gap-4">
+
+            <form id="reserva-sala-form" class="grid max-w-3xl gap-4">
+              <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                Prueba
+                <select class="field rounded-md px-4 py-3" name="exam_id" id="reserva-prueba" required></select>
+              </label>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                  Sala
+                  <select class="field rounded-md px-4 py-3" name="room_id" id="reserva-sala" required></select>
+                </label>
+
+                <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                  Bloque
+                  <select class="field rounded-md px-4 py-3" name="block_id" id="reserva-bloque" required></select>
+                </label>
+              </div>
+
+              <p class="rounded-md border-l-4 border-gold bg-mist px-4 py-3 text-sm leading-6 text-[#555555]">
+                La API valida que el bloque elegido corresponda al bloque definido para la prueba seleccionada.
+              </p>
+
+              <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" type="submit">Reservar sala</button>
+            </form>
+
+            <div class="mt-8 border-t border-[#e7e7e7] pt-6">
+              <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Reservas existentes</p>
+                  <h2 class="mt-1 text-2xl font-black tracking-tight">Salas reservadas por bloque</h2>
+                </div>
+                <span class="rounded-md border-l-4 border-gold bg-mist px-3 py-2 text-xs font-bold uppercase tracking-wide text-[#333333]">Datos en vivo</span>
+              </div>
+              <label class="mb-5 grid gap-2 text-sm font-bold text-[#333333]">
+                Buscar reservas
+                <input id="reservation-search" class="field rounded-md px-4 py-3" type="search" placeholder="Buscar por prueba, sala, curso o bloque" />
+              </label>
+              <ul id="exam-room-assignment-list" class="grid gap-3"></ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="page-exams-pdfs" class="page-view hidden bg-paper" data-page="exams-pdfs">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 max-w-2xl">
+              <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Pruebas</p>
+              <h1 class="mt-1 text-3xl font-black tracking-tight">PDFs de pruebas</h1>
+              <p class="mt-3 text-sm leading-6 text-[#555555]">
+                Carga, revisa, descarga o elimina el PDF asociado a cada prueba. Los archivos se guardan en MongoDB/GridFS.
+              </p>
+            </div>
+
+            <form id="exam-pdf-form" class="grid max-w-3xl gap-4">
+              <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                Prueba
+                <select class="field rounded-md px-4 py-3" name="exam_id" id="exam-pdf-select" required></select>
+              </label>
+
+              <label class="grid gap-2 text-sm font-bold text-[#333333]">
+                Archivo PDF
+                <input class="field rounded-md px-4 py-3" name="pdf_file" type="file" accept="application/pdf,.pdf" required />
+              </label>
+
+              <p class="rounded-md border-l-4 border-gold bg-mist px-4 py-3 text-sm leading-6 text-[#555555]">
+                Solo se aceptan archivos PDF. Si la prueba ya tiene un PDF, la nueva carga reemplaza el archivo anterior.
+              </p>
+
+              <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" type="submit">Cargar PDF</button>
+            </form>
+
+            <div class="mt-8 border-t border-[#e7e7e7] pt-6">
+              <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Repositorio</p>
+                  <h2 class="mt-1 text-2xl font-black tracking-tight">PDFs asociados a pruebas</h2>
+                </div>
+                <span class="rounded-md border-l-4 border-gold bg-mist px-3 py-2 text-xs font-bold uppercase tracking-wide text-[#333333]">Datos en vivo</span>
+              </div>
+
+              <label class="mb-5 grid gap-2 text-sm font-bold text-[#333333]">
+                Buscar pruebas
+                <input id="exam-pdf-search" class="field rounded-md px-4 py-3" type="search" placeholder="Buscar por prueba, curso, bloque o estado PDF" />
+              </label>
+
+              <ul id="exam-pdf-list" class="grid gap-3"></ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="page-assignments-generate" class="page-view hidden bg-paper" data-page="assignments-generate">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 max-w-2xl">
+              <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Asignaciones</p>
+              <h1 class="mt-1 text-3xl font-black tracking-tight">Generar asignaciones</h1>
+              <p class="mt-3 text-sm leading-6 text-[#555555]">
+                Asigna a todos los alumnos inscritos para una prueba, sala y bloque seleccionados. Los alumnos con conflictos de horario no se asignan.
+              </p>
+            </div>
+
+            <form id="asignacion-form" class="grid max-w-3xl min-w-0 gap-4">
               <label class="grid min-w-0 gap-2 text-sm font-bold text-[#333333]">
                 Prueba, sala y bloque
                 <select class="field rounded-md px-4 py-3" name="uso_sala_key" id="asignacion-uso-sala" required></select>
               </label>
 
-              <p class="text-sm leading-6 text-[#555555]">
-                Se asignara automaticamente a todos los alumnos inscritos en el curso de la prueba. Si alguno ya tiene una prueba en ese bloque, no se asigna la prueba en ese horario.
+              <p class="rounded-md border-l-4 border-gold bg-mist px-4 py-3 text-sm leading-6 text-[#555555]">
+                Flujo actual: la generacion de asignaciones se ejecuta para cada alumno inscrito en el curso de la prueba seleccionada.
               </p>
 
               <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" type="submit">Generar asignaciones</button>
@@ -162,56 +500,123 @@
         </div>
       </section>
 
-      <section class="bg-paper">
-        <div class="mx-auto grid max-w-7xl gap-5 px-5 py-8 sm:px-8 lg:grid-cols-[1.2fr_0.8fr] lg:px-10">
+      <section id="page-assignments-list" class="page-view hidden bg-paper" data-page="assignments-list">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
           <article class="panel rounded-lg p-6">
-            <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Base de datos</p>
-                <h2 class="mt-1 text-2xl font-black tracking-tight">Pruebas asignadas</h2>
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Asignaciones</p>
+                <h1 class="mt-1 text-3xl font-black tracking-tight">Pruebas asignadas</h1>
               </div>
               <span class="rounded-md border-l-4 border-gold bg-mist px-3 py-2 text-xs font-bold uppercase tracking-wide text-[#333333]">Datos en vivo</span>
             </div>
-            <ul id="assignment-list" class="grid gap-3"></ul>
-          </article>
 
-          <article class="panel rounded-lg p-6">
-            <div class="mb-5">
-              <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Registro</p>
-              <h2 class="mt-1 text-2xl font-black tracking-tight">Alumnos disponibles</h2>
-            </div>
-            <ul id="alumno-list" class="grid gap-3"></ul>
+            <label class="mb-5 grid gap-2 text-sm font-bold text-[#333333]">
+              Buscar asignaciones
+              <input id="assignment-search" class="field rounded-md px-4 py-3" type="search" placeholder="Buscar por alumno, prueba, curso, sala o bloque" />
+            </label>
+            <ul id="assignment-list" class="grid gap-3"></ul>
           </article>
         </div>
       </section>
 
-      <section class="border-t border-[#e6e6e6] bg-mist">
+      <section id="page-assignments-conflicts" class="page-view hidden bg-paper" data-page="assignments-conflicts">
         <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
           <article class="panel rounded-lg p-6">
-            <details class="group">
-              <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
-                <div>
-                  <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Consulta por alumno</p>
-                  <h2 class="mt-1 text-2xl font-black tracking-tight">Ver pruebas asignadas</h2>
-                </div>
-                <span class="rounded-md bg-electric px-3 py-2 text-sm font-black text-white group-open:hidden">Abrir</span>
-                <span class="hidden rounded-md bg-black px-3 py-2 text-sm font-black text-white group-open:inline">Cerrar</span>
-              </summary>
-              <div class="mt-5 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-                <div>
-                  <p class="text-sm leading-6 text-[#555555]">
-                    Selecciona un alumno para consultar sus pruebas asociadas desde la API.
-                  </p>
-                </div>
-                <div class="min-w-0">
-                  <div class="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-                    <select class="field rounded-md px-4 py-3" id="asignaciones-by-alumno-select"></select>
-                    <button class="action-button rounded-md px-5 py-3 font-black uppercase tracking-wide transition" id="load-alumno-asignaciones" type="button">Consultar</button>
-                  </div>
-                  <ul id="alumno-asignacion-list" class="mt-5 grid max-h-80 gap-3 overflow-auto pr-1"></ul>
-                </div>
+            <div class="mb-6 max-w-2xl">
+              <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Asignaciones</p>
+              <h1 class="mt-1 text-3xl font-black tracking-tight">Conflictos de asignacion</h1>
+              <p class="mt-3 text-sm leading-6 text-[#555555]">
+                Revisa los conflictos persistidos por la API cuando una asignacion falla o omite alumnos por solapamientos.
+              </p>
+            </div>
+
+            <label class="mb-5 grid gap-2 text-sm font-bold text-[#333333]">
+              Buscar conflictos
+              <input id="conflict-search" class="field rounded-md px-4 py-3" type="search" placeholder="Buscar por alumno, prueba, sala, bloque o motivo" />
+            </label>
+
+            <ul id="conflict-list" class="grid gap-3"></ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="page-academic-programs" class="page-view hidden bg-paper" data-page="academic-programs">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Datos academicos</p>
+                <h1 class="mt-1 text-3xl font-black tracking-tight">Carreras</h1>
               </div>
-            </details>
+              <span class="rounded-md border-l-4 border-gold bg-mist px-3 py-2 text-xs font-bold uppercase tracking-wide text-[#333333]">Solo lectura</span>
+            </div>
+
+            <label class="mb-5 grid gap-2 text-sm font-bold text-[#333333]">
+              Buscar carreras
+              <input id="degree-program-search" class="field rounded-md px-4 py-3" type="search" placeholder="Buscar por nombre o ID" />
+            </label>
+            <ul id="degree-program-list" class="grid gap-3"></ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="page-academic-course-sections" class="page-view hidden bg-paper" data-page="academic-course-sections">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Datos academicos</p>
+                <h1 class="mt-1 text-3xl font-black tracking-tight">Cursos y secciones</h1>
+              </div>
+              <span class="rounded-md border-l-4 border-gold bg-mist px-3 py-2 text-xs font-bold uppercase tracking-wide text-[#333333]">Solo lectura</span>
+            </div>
+
+            <label class="mb-5 grid gap-2 text-sm font-bold text-[#333333]">
+              Buscar cursos
+              <input id="course-section-search" class="field rounded-md px-4 py-3" type="search" placeholder="Buscar por nombre, seccion o ID" />
+            </label>
+            <ul id="course-section-list" class="grid gap-3"></ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="page-academic-exam-blocks" class="page-view hidden bg-paper" data-page="academic-exam-blocks">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Datos academicos</p>
+                <h1 class="mt-1 text-3xl font-black tracking-tight">Bloques de prueba</h1>
+              </div>
+              <span class="rounded-md border-l-4 border-gold bg-mist px-3 py-2 text-xs font-bold uppercase tracking-wide text-[#333333]">Solo lectura</span>
+            </div>
+
+            <label class="mb-5 grid gap-2 text-sm font-bold text-[#333333]">
+              Buscar bloques
+              <input id="exam-block-search" class="field rounded-md px-4 py-3" type="search" placeholder="Buscar por dia, fecha, hora o ID" />
+            </label>
+            <ul id="exam-block-list" class="grid gap-3"></ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="page-academic-rooms" class="page-view hidden bg-paper" data-page="academic-rooms">
+        <div class="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+          <article class="panel rounded-lg p-6">
+            <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-gold">Datos academicos</p>
+                <h1 class="mt-1 text-3xl font-black tracking-tight">Salas</h1>
+              </div>
+              <span class="rounded-md border-l-4 border-gold bg-mist px-3 py-2 text-xs font-bold uppercase tracking-wide text-[#333333]">Solo lectura</span>
+            </div>
+
+            <label class="mb-5 grid gap-2 text-sm font-bold text-[#333333]">
+              Buscar salas
+              <input id="room-search" class="field rounded-md px-4 py-3" type="search" placeholder="Buscar por sala, edificio, numero o cupo" />
+            </label>
+            <ul id="room-list" class="grid gap-3"></ul>
           </article>
         </div>
       </section>

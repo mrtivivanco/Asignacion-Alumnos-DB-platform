@@ -1,105 +1,138 @@
 from datetime import date, datetime, time
 
-from sqlalchemy import Index, UniqueConstraint
+from sqlalchemy import ForeignKeyConstraint, Index, UniqueConstraint
 from sqlmodel import Field, SQLModel
 
 
-class Alumno(SQLModel, table=True):
-    __tablename__ = "alumnos"
+class Student(SQLModel, table=True):
+    __tablename__ = "students"
 
-    rut: str = Field(primary_key=True, max_length=12)
-    nombre: str = Field(nullable=False, max_length=80)
-    apellido: str = Field(nullable=False, max_length=80)
-    email: str | None = Field(default=None, max_length=160)
+    student_id: str = Field(primary_key=True, max_length=12)
+    first_name: str = Field(nullable=False, max_length=80)
+    last_name: str = Field(nullable=False, max_length=80)
+    email: str | None = Field(default=None, unique=True, max_length=160)
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
 
-class Carrera(SQLModel, table=True):
-    __tablename__ = "carreras"
+class DegreeProgram(SQLModel, table=True):
+    __tablename__ = "degree_programs"
 
-    id_carrera: int | None = Field(default=None, primary_key=True)
-    nombre: str = Field(nullable=False, unique=True, index=True, max_length=120)
-
-
-class AlumnoCarrera(SQLModel, table=True):
-    __tablename__ = "alumno_carreras"
-
-    rut_alumno: str = Field(foreign_key="alumnos.rut", primary_key=True, max_length=12)
-    id_carrera: int = Field(foreign_key="carreras.id_carrera", primary_key=True)
+    program_id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(nullable=False, unique=True, index=True, max_length=120)
 
 
-class Curso(SQLModel, table=True):
-    __tablename__ = "cursos"
-    __table_args__ = (UniqueConstraint("nombre", "seccion"),)
+class StudentProgram(SQLModel, table=True):
+    __tablename__ = "student_programs"
 
-    id_curso: int | None = Field(default=None, primary_key=True)
-    seccion: str = Field(nullable=False, max_length=20)
-    nombre: str = Field(nullable=False, max_length=120)
-    cupo: int = Field(nullable=False, ge=1)
+    student_id: str = Field(foreign_key="students.student_id", primary_key=True, max_length=12)
+    program_id: int = Field(foreign_key="degree_programs.program_id", primary_key=True)
+
+
+class CourseSection(SQLModel, table=True):
+    __tablename__ = "course_sections"
+    __table_args__ = (UniqueConstraint("name", "section_code"),)
+
+    course_section_id: int | None = Field(default=None, primary_key=True)
+    section_code: str = Field(nullable=False, max_length=20)
+    name: str = Field(nullable=False, max_length=120)
+    capacity: int = Field(nullable=False, ge=1)
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
 
-class Inscripcion(SQLModel, table=True):
-    __tablename__ = "inscripciones"
+class CourseEnrollment(SQLModel, table=True):
+    __tablename__ = "course_enrollments"
 
-    rut_alumno: str = Field(foreign_key="alumnos.rut", primary_key=True, max_length=12)
-    id_curso: int = Field(foreign_key="cursos.id_curso", primary_key=True)
-    fecha_inscripcion: date | None = None
-
-
-class Bloque(SQLModel, table=True):
-    __tablename__ = "bloques"
-    __table_args__ = (UniqueConstraint("fecha", "hora_inicio", "hora_fin"),)
-
-    n_bloque: int = Field(primary_key=True)
-    fecha: date = Field(nullable=False)
-    dia: str = Field(nullable=False, max_length=20)
-    hora_inicio: time = Field(nullable=False)
-    hora_fin: time = Field(nullable=False)
+    student_id: str = Field(foreign_key="students.student_id", primary_key=True, max_length=12)
+    course_section_id: int = Field(foreign_key="course_sections.course_section_id", primary_key=True)
+    enrolled_on: date | None = None
 
 
-class Prueba(SQLModel, table=True):
-    __tablename__ = "pruebas"
-    __table_args__ = (UniqueConstraint("id_curso", "nombre", "anio_creacion"),)
+class ExamBlock(SQLModel, table=True):
+    __tablename__ = "exam_blocks"
+    __table_args__ = (UniqueConstraint("exam_date", "start_time"),)
 
-    id_evaluacion: int | None = Field(default=None, primary_key=True)
-    id_curso: int = Field(foreign_key="cursos.id_curso", nullable=False)
-    nombre: str = Field(nullable=False, max_length=140)
-    tipo: str | None = Field(default=None, max_length=60)
-    anio_creacion: int | None = Field(default=None, ge=2000, le=2100)
-
-
-class Sala(SQLModel, table=True):
-    __tablename__ = "salas"
-
-    id_sala: str = Field(primary_key=True, max_length=20)
-    n_sala: int = Field(nullable=False)
-    edificio: str = Field(nullable=False, max_length=80)
-    cupo: int = Field(nullable=False, ge=1)
+    block_id: int = Field(primary_key=True)
+    exam_date: date = Field(nullable=False)
+    day_name: str = Field(nullable=False, max_length=20)
+    start_time: time = Field(nullable=False)
+    end_time: time = Field(nullable=False)
 
 
-class UsoSala(SQLModel, table=True):
-    __tablename__ = "uso_sala"
+class Exam(SQLModel, table=True):
+    __tablename__ = "exams"
     __table_args__ = (
-        UniqueConstraint("id_evaluacion", "id_sala", "n_bloque"),
-        UniqueConstraint("id_sala", "n_bloque"),
+        UniqueConstraint("course_section_id", "name", "creation_year"),
+        UniqueConstraint("exam_id", "block_id"),
     )
 
-    id_evaluacion: int = Field(foreign_key="pruebas.id_evaluacion", primary_key=True)
-    id_sala: str = Field(foreign_key="salas.id_sala", primary_key=True, max_length=20)
-    n_bloque: int = Field(foreign_key="bloques.n_bloque", primary_key=True)
+    exam_id: int | None = Field(default=None, primary_key=True)
+    course_section_id: int = Field(foreign_key="course_sections.course_section_id", nullable=False)
+    block_id: int = Field(foreign_key="exam_blocks.block_id", nullable=False)
+    name: str = Field(nullable=False, max_length=140)
+    exam_type: str | None = Field(default=None, max_length=60)
+    creation_year: int | None = Field(default=None, ge=2000, le=2100)
+    pdf_file_id: str | None = Field(default=None, unique=True, max_length=24)
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
 
-class Asignacion(SQLModel, table=True):
-    __tablename__ = "asignaciones"
+class Room(SQLModel, table=True):
+    __tablename__ = "rooms"
+    __table_args__ = (UniqueConstraint("room_number", "building"),)
+
+    room_id: str = Field(primary_key=True, max_length=20)
+    room_number: int = Field(nullable=False)
+    building: str = Field(nullable=False, max_length=80)
+    capacity: int = Field(nullable=False, ge=1)
+
+
+class ExamRoomAssignment(SQLModel, table=True):
+    __tablename__ = "exam_room_assignments"
     __table_args__ = (
-        UniqueConstraint("rut_alumno", "id_evaluacion"),
-        Index("ix_asignaciones_id_sala_n_bloque", "id_sala", "n_bloque"),
+        ForeignKeyConstraint(["exam_id", "block_id"], ["exams.exam_id", "exams.block_id"]),
+        UniqueConstraint("exam_id", "block_id", "room_id"),
     )
 
-    rut_alumno: str = Field(foreign_key="alumnos.rut", primary_key=True, max_length=12)
-    n_bloque: int = Field(foreign_key="bloques.n_bloque", primary_key=True)
-    id_evaluacion: int = Field(foreign_key="pruebas.id_evaluacion", nullable=False)
-    id_sala: str = Field(foreign_key="salas.id_sala", nullable=False, max_length=20)
+    block_id: int = Field(foreign_key="exam_blocks.block_id", primary_key=True)
+    room_id: str = Field(foreign_key="rooms.room_id", primary_key=True, max_length=20)
+    exam_id: int = Field(nullable=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+
+
+class StudentExamAssignment(SQLModel, table=True):
+    __tablename__ = "student_exam_assignments"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["exam_id", "block_id", "room_id"],
+            [
+                "exam_room_assignments.exam_id",
+                "exam_room_assignments.block_id",
+                "exam_room_assignments.room_id",
+            ],
+        ),
+        UniqueConstraint("student_id", "exam_id"),
+        Index("ix_student_exam_assignments_room_block", "room_id", "block_id"),
+    )
+
+    student_id: str = Field(foreign_key="students.student_id", primary_key=True, max_length=12)
+    block_id: int = Field(primary_key=True)
+    exam_id: int = Field(nullable=False)
+    room_id: str = Field(nullable=False, max_length=20)
+    status: str = Field(default="assigned", nullable=False, max_length=20)
+    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+
+
+class AssignmentConflict(SQLModel, table=True):
+    __tablename__ = "assignment_conflicts"
+    __table_args__ = (
+        Index("ix_assignment_conflicts_exam_block", "exam_id", "block_id"),
+        Index("ix_assignment_conflicts_student", "student_id"),
+    )
+
+    conflict_id: int | None = Field(default=None, primary_key=True)
+    student_id: str | None = Field(default=None, foreign_key="students.student_id", max_length=12)
+    exam_id: int = Field(foreign_key="exams.exam_id", nullable=False)
+    block_id: int = Field(foreign_key="exam_blocks.block_id", nullable=False)
+    room_id: str = Field(foreign_key="rooms.room_id", nullable=False, max_length=20)
+    conflict_type: str = Field(nullable=False, max_length=60)
+    reason: str = Field(nullable=False, max_length=300)
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
