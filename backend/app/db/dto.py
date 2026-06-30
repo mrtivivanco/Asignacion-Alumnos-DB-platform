@@ -119,7 +119,6 @@ class StudentProgramRead(StudentProgramCreate):
 
 
 class CourseSectionCreate(SQLModel):
-    section_code: str = Field(min_length=1, max_length=20)
     name: str = Field(min_length=2, max_length=120)
     capacity: int = Field(ge=1)
 
@@ -130,7 +129,6 @@ class CourseSectionRead(CourseSectionCreate):
 
 
 class CourseSectionUpdate(SQLModel):
-    section_code: str | None = Field(default=None, min_length=1, max_length=20)
     name: str | None = Field(default=None, min_length=2, max_length=120)
     capacity: int | None = Field(default=None, ge=1)
 
@@ -224,7 +222,7 @@ class ExamBlockUpdate(SQLModel):
 
 class ExamCreate(SQLModel):
     course_section_id: int
-    block_id: int
+    block_id: int | None = None
     name: str = Field(min_length=2, max_length=140)
     exam_type: str | None = Field(default=None, max_length=60)
     creation_year: int | None = Field(default=None, ge=2000, le=2100)
@@ -235,7 +233,7 @@ class ExamRead(ExamCreate):
     pdf_file_id: str | None = Field(default=None, min_length=24, max_length=24)
     created_at: datetime
     course_section: CourseSectionRead
-    block: ExamBlockRead
+    block: ExamBlockRead | None = None
 
 
 class ExamUpdate(SQLModel):
@@ -338,21 +336,3 @@ class AssignmentConflictCreate(SQLModel):
 class AssignmentConflictRead(AssignmentConflictCreate):
     conflict_id: int
     created_at: datetime
-
-
-class CourseExamAssignmentCreate(SQLModel):
-    exam_id: int
-    room_id: str
-    block_id: int
-
-
-class CourseExamAssignmentResult(SQLModel):
-    exam_id: int
-    course_section_id: int
-    block_id: int
-    room_id: str
-    total_enrolled: int
-    total_assigned: int
-    total_conflicts: int
-    assignments: list[StudentExamAssignmentRead]
-    conflicts: list[str]

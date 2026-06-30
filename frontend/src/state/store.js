@@ -7,7 +7,6 @@ export const state = {
   rooms: [],
   examRoomAssignments: [],
   studentExamAssignments: [],
-  assignmentConflicts: [],
   examPdfMetadata: {},
 };
 
@@ -20,7 +19,6 @@ export function setReferenceData({
   rooms,
   examRoomAssignments,
   studentExamAssignments,
-  assignmentConflicts = [],
   examPdfMetadata = {},
 }) {
   state.students = students;
@@ -31,6 +29,5 @@ export function setReferenceData({
   state.rooms = rooms;
   state.examRoomAssignments = examRoomAssignments;
   state.studentExamAssignments = studentExamAssignments;
-  state.assignmentConflicts = assignmentConflicts;
   state.examPdfMetadata = examPdfMetadata;
 }

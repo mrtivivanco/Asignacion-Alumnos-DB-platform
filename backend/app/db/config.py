@@ -6,6 +6,7 @@ from urllib.parse import quote_plus
 
 from fastapi import Depends
 from dotenv import load_dotenv
+from sqlalchemy import text
 from sqlmodel import Session, SQLModel, create_engine
 
 from . import schema
@@ -51,6 +52,13 @@ def create_db_and_tables() -> None:
     # Importing schema registers table metadata before SQLModel creates tables.
     _ = schema
     SQLModel.metadata.create_all(engine)
+    apply_schema_migrations()
+
+
+def apply_schema_migrations() -> None:
+    with engine.begin() as connection:
+        connection.execute(text("ALTER TABLE exams ALTER COLUMN block_id DROP NOT NULL"))
+        connection.execute(text("ALTER TABLE course_sections DROP COLUMN IF EXISTS section_code"))
 
 
 def get_session() -> Generator[Session, None, None]:

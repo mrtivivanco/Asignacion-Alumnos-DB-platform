@@ -46,5 +46,9 @@ function formatDetail(detail) {
     return detail;
   }
 
+  if (detail && typeof detail === "object" && typeof detail.message === "string") {
+    return detail.message;
+  }
+
   return JSON.stringify(detail);
 }

@@ -11,8 +11,6 @@ from ..db.dto import (
     AssignmentConflictRead,
     CourseEnrollmentCreate,
     CourseEnrollmentRead,
-    CourseExamAssignmentCreate,
-    CourseExamAssignmentResult,
     CourseSectionCreate,
     CourseSectionRead,
     CourseSectionUpdate,
@@ -54,6 +52,7 @@ from ..db.schema import (
     StudentProgram,
 )
 from ..storage.exam_pdfs import delete_exam_pdf
+from ..utils.ids import require_id
 
 
 router = APIRouter(prefix="/api")
@@ -97,11 +96,151 @@ def require_exam_room_assignment(session: SessionDep, exam_id: int, block_id: in
 
 
 def validate_exam_block(exam: Exam, block_id: int) -> None:
+    if exam.block_id is None:
+        return
     if exam.block_id != block_id:
         raise HTTPException(
             status_code=409,
             detail="The selected block does not match the exam block",
         )
+
+
+def set_exam_block_if_empty(session: SessionDep, exam: Exam, block_id: int) -> None:
+    if exam.block_id is not None:
+        validate_exam_block(exam, block_id)
+        return
+
+    exam.block_id = block_id
+    session.add(exam)
+
+
+def validate_no_student_block_overlaps(session: SessionDep, exam: Exam, block_id: int) -> None:
+    exam_id = require_id(exam.exam_id, "Exam")
+    enrolled_student_ids = {
+        enrollment.student_id for enrollment in crud.list_course_enrollments_by_section(session, exam.course_section_id)
+    }
+    conflict_student_ids = set()
+
+    for enrollment in crud.list_course_enrollments_by_section(session, exam.course_section_id):
+        existing_assignment = crud.get_student_exam_assignment(session, enrollment.student_id, block_id)
+        if existing_assignment is not None and existing_assignment.exam_id != exam_id:
+            conflict_student_ids.add(enrollment.student_id)
+
+    for room_assignment in crud.list_exam_room_assignments(session, block_id=block_id):
+        if room_assignment.exam_id == exam_id:
+            continue
+
+        scheduled_exam = crud.get_exam(session, room_assignment.exam_id)
+        if scheduled_exam is None:
+            continue
+
+        for enrollment in crud.list_course_enrollments_by_section(session, scheduled_exam.course_section_id):
+            if enrollment.student_id in enrolled_student_ids:
+                conflict_student_ids.add(enrollment.student_id)
+
+    if not conflict_student_ids:
+        return
+
+    sorted_conflicts = sorted(conflict_student_ids)
+    sample = ", ".join(sorted_conflicts[:5])
+    remaining = len(sorted_conflicts) - 5
+    suffix = f" y {remaining} mas" if remaining > 0 else ""
+    raise HTTPException(
+        status_code=409,
+        detail={
+            "code": "student_block_overlap",
+            "message": (
+                f"No se puede reservar la prueba en el bloque {block_id}: "
+                f"{len(sorted_conflicts)} alumno(s) inscritos ya tienen una prueba agendada o asignada en ese bloque "
+                f"({sample}{suffix})."
+            ),
+            "student_ids": sorted_conflicts,
+        },
+    )
+
+
+def validate_room_capacity_for_enrollments(
+    session: SessionDep,
+    room: Room,
+    block_id: int,
+    enrollments: list[CourseEnrollment],
+) -> None:
+    available_capacity = room.capacity - crud.count_room_assignments(session, block_id, room.room_id)
+    if len(enrollments) <= available_capacity:
+        return
+
+    raise HTTPException(
+        status_code=409,
+        detail={
+            "code": "room_capacity",
+            "message": (
+                f"No se puede reservar la sala {room.room_id} en el bloque {block_id}: "
+                f"hay {len(enrollments)} alumno(s) inscritos y solo {available_capacity} cupo(s) disponibles."
+            ),
+        },
+    )
+
+
+def validate_no_duplicate_exam_assignments(
+    session: SessionDep,
+    exam: Exam,
+    enrollments: list[CourseEnrollment],
+) -> None:
+    exam_id = require_id(exam.exam_id, "Exam")
+    duplicate_student_ids = [
+        enrollment.student_id
+        for enrollment in enrollments
+        if crud.get_student_exam_assignment_by_student_exam(session, enrollment.student_id, exam_id) is not None
+    ]
+
+    if not duplicate_student_ids:
+        return
+
+    sample = ", ".join(duplicate_student_ids[:5])
+    remaining = len(duplicate_student_ids) - 5
+    suffix = f" y {remaining} mas" if remaining > 0 else ""
+    raise HTTPException(
+        status_code=409,
+        detail={
+            "code": "duplicate_exam_assignment",
+            "message": (
+                f"No se puede reservar la prueba: {len(duplicate_student_ids)} alumno(s) "
+                f"ya estan asignados a esta prueba ({sample}{suffix})."
+            ),
+            "student_ids": duplicate_student_ids,
+        },
+    )
+
+
+def create_reservation_with_student_assignments(
+    session: SessionDep,
+    data: ExamRoomAssignmentCreate,
+    exam: Exam,
+    enrollments: list[CourseEnrollment],
+) -> ExamRoomAssignment:
+    exam_id = require_id(exam.exam_id, "Exam")
+    set_exam_block_if_empty(session, exam, data.block_id)
+
+    room_assignment = ExamRoomAssignment(
+        exam_id=exam_id,
+        block_id=data.block_id,
+        room_id=data.room_id,
+    )
+    session.add(room_assignment)
+
+    for enrollment in enrollments:
+        session.add(
+            StudentExamAssignment(
+                student_id=enrollment.student_id,
+                exam_id=exam_id,
+                block_id=data.block_id,
+                room_id=data.room_id,
+            )
+        )
+
+    session.commit()
+    session.refresh(room_assignment)
+    return room_assignment
 
 
 def validate_exam_block_update(block: ExamBlock, data: ExamBlockUpdate) -> None:
@@ -352,7 +491,8 @@ def list_exams(
 @router.post("/exams", response_model=ExamRead, status_code=status.HTTP_201_CREATED, tags=[EXAMS_TAG])
 def create_exam(exam_data: ExamCreate, session: SessionDep):
     require_exists(session, CourseSection, exam_data.course_section_id, "Course section")
-    require_exists(session, ExamBlock, exam_data.block_id, "Exam block")
+    if exam_data.block_id is not None:
+        require_exists(session, ExamBlock, exam_data.block_id, "Exam block")
     exam = conflict_safe(session, lambda: crud.create_exam(session, exam_data))
     return crud.exam_to_read(session, exam)
 
@@ -436,10 +576,18 @@ def list_exam_room_assignments(
 )
 def create_exam_room_assignment(data: ExamRoomAssignmentCreate, session: SessionDep):
     exam = require_exists(session, Exam, data.exam_id, "Exam")
-    require_exists(session, Room, data.room_id, "Room")
+    room = require_exists(session, Room, data.room_id, "Room")
     require_exists(session, ExamBlock, data.block_id, "Exam block")
+    if crud.get_exam_room_assignment(session, data.block_id, data.room_id) is not None:
+        raise HTTPException(status_code=409, detail="Room is already reserved for this block")
+
+    enrollments = crud.list_course_enrollments_by_section(session, exam.course_section_id)
     validate_exam_block(exam, data.block_id)
-    assignment = conflict_safe(session, lambda: crud.create_exam_room_assignment(session, data))
+    validate_no_student_block_overlaps(session, exam, data.block_id)
+    validate_no_duplicate_exam_assignments(session, exam, enrollments)
+    validate_room_capacity_for_enrollments(session, room, data.block_id, enrollments)
+
+    assignment = conflict_safe(session, lambda: create_reservation_with_student_assignments(session, data, exam, enrollments))
     return crud.exam_room_assignment_to_read(session, assignment)
 
 
@@ -458,6 +606,8 @@ def update_exam_room_assignment(
     if data.exam_id is not None:
         exam = require_exists(session, Exam, data.exam_id, "Exam")
         validate_exam_block(exam, block_id)
+        validate_no_student_block_overlaps(session, exam, block_id)
+        set_exam_block_if_empty(session, exam, block_id)
     updated = conflict_safe(session, lambda: crud.update_exam_room_assignment(session, assignment, data))
     return crud.exam_room_assignment_to_read(session, updated)
 
@@ -615,98 +765,6 @@ def delete_student_exam_assignment(student_id: str, block_id: int, session: Sess
         "Student exam assignment",
     )
     conflict_safe(session, lambda: crud.delete_item(session, assignment))
-
-
-@router.post(
-    "/student-exam-assignments/course",
-    response_model=CourseExamAssignmentResult,
-    status_code=status.HTTP_201_CREATED,
-    tags=[STUDENT_EXAM_ASSIGNMENTS_TAG],
-)
-def create_course_exam_assignments(data: CourseExamAssignmentCreate, session: SessionDep):
-    exam = require_exists(session, Exam, data.exam_id, "Exam")
-    room = require_exists(session, Room, data.room_id, "Room")
-    require_exists(session, ExamBlock, data.block_id, "Exam block")
-    validate_exam_block(exam, data.block_id)
-    require_exam_room_assignment(session, data.exam_id, data.block_id, data.room_id)
-
-    enrollments = crud.list_course_enrollments_by_section(session, exam.course_section_id)
-    conflicts = []
-    assignments = []
-    existing_room_assignments = crud.count_room_assignments(session, data.block_id, data.room_id)
-    available_capacity = max(room.capacity - existing_room_assignments, 0)
-    assigned_for_request = 0
-
-    for enrollment in enrollments:
-        student_id = enrollment.student_id
-        if crud.get_student_exam_assignment(session, student_id, data.block_id) is not None:
-            conflicts.append(
-                record_assignment_conflict(
-                    session,
-                    student_id=student_id,
-                    exam_id=data.exam_id,
-                    block_id=data.block_id,
-                    room_id=data.room_id,
-                    conflict_type="block_overlap",
-                    reason=f"{student_id}: already has an exam assigned in block {data.block_id}",
-                )
-            )
-            continue
-
-        if crud.get_student_exam_assignment_by_student_exam(session, student_id, data.exam_id) is not None:
-            conflicts.append(
-                record_assignment_conflict(
-                    session,
-                    student_id=student_id,
-                    exam_id=data.exam_id,
-                    block_id=data.block_id,
-                    room_id=data.room_id,
-                    conflict_type="duplicate_exam",
-                    reason=f"{student_id}: already assigned to this exam",
-                )
-            )
-            continue
-
-        if assigned_for_request >= available_capacity:
-            conflicts.append(
-                record_assignment_conflict(
-                    session,
-                    student_id=student_id,
-                    exam_id=data.exam_id,
-                    block_id=data.block_id,
-                    room_id=data.room_id,
-                    conflict_type="room_capacity",
-                    reason=f"{student_id}: room {data.room_id} is full in block {data.block_id}",
-                )
-            )
-            continue
-
-        assignment = conflict_safe(
-            session,
-            lambda current_student_id=student_id: crud.create_student_exam_assignment(
-                session,
-                StudentExamAssignmentCreate(
-                    student_id=current_student_id,
-                    block_id=data.block_id,
-                    exam_id=data.exam_id,
-                    room_id=data.room_id,
-                ),
-            ),
-        )
-        assignments.append(crud.student_exam_assignment_to_read(session, assignment))
-        assigned_for_request += 1
-
-    return CourseExamAssignmentResult(
-        exam_id=data.exam_id,
-        course_section_id=exam.course_section_id,
-        block_id=data.block_id,
-        room_id=data.room_id,
-        total_enrolled=len(enrollments),
-        total_assigned=len(assignments),
-        total_conflicts=len(conflicts),
-        assignments=assignments,
-        conflicts=conflicts,
-    )
 
 
 @router.get("/assignment-conflicts", response_model=list[AssignmentConflictRead], tags=[ASSIGNMENT_CONFLICTS_TAG])

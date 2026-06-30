@@ -2,7 +2,6 @@ import "./styles.css";
 
 import {
   getExamPdfMetadata,
-  listAssignmentConflicts,
   listCourseSections,
   listDegreePrograms,
   listExamBlocks,
@@ -18,7 +17,6 @@ import { bindNavigation } from "./ui/navigation.js";
 import {
   bindFeedbackHandlers,
   bindFilterHandlers,
-  recordConflictMessage,
   render,
   setFeedbackMessage,
   setStatusMessage,
@@ -51,7 +49,6 @@ async function loadData() {
     rooms,
     examRoomAssignments,
     studentExamAssignments,
-    assignmentConflicts,
   ] =
     await Promise.all([
       listStudents(),
@@ -62,7 +59,6 @@ async function loadData() {
       listRooms(),
       listExamRoomAssignments(),
       listStudentExamAssignments(),
-      listAssignmentConflicts(),
     ]);
 
   const examPdfMetadata = await loadExamPdfMetadata(exams);
@@ -76,7 +72,6 @@ async function loadData() {
     rooms,
     examRoomAssignments,
     studentExamAssignments,
-    assignmentConflicts,
     examPdfMetadata,
   });
 
@@ -93,7 +88,7 @@ function showError(error) {
 bindNavigation();
 bindFeedbackHandlers();
 bindFilterHandlers(state);
-bindFormHandlers({ loadData, showError, setFeedbackMessage, setStatusMessage, recordConflictMessage });
+bindFormHandlers({ loadData, showError, setFeedbackMessage, setStatusMessage });
 
 loadData().catch((error) => {
   const message = `No se pudieron cargar los datos de la API: ${error.message}`;

@@ -30,11 +30,9 @@ class StudentProgram(SQLModel, table=True):
 
 class CourseSection(SQLModel, table=True):
     __tablename__ = "course_sections"
-    __table_args__ = (UniqueConstraint("name", "section_code"),)
 
     course_section_id: int | None = Field(default=None, primary_key=True)
-    section_code: str = Field(nullable=False, max_length=20)
-    name: str = Field(nullable=False, max_length=120)
+    name: str = Field(nullable=False, unique=True, max_length=120)
     capacity: int = Field(nullable=False, ge=1)
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
@@ -67,7 +65,7 @@ class Exam(SQLModel, table=True):
 
     exam_id: int | None = Field(default=None, primary_key=True)
     course_section_id: int = Field(foreign_key="course_sections.course_section_id", nullable=False)
-    block_id: int = Field(foreign_key="exam_blocks.block_id", nullable=False)
+    block_id: int | None = Field(default=None, foreign_key="exam_blocks.block_id")
     name: str = Field(nullable=False, max_length=140)
     exam_type: str | None = Field(default=None, max_length=60)
     creation_year: int | None = Field(default=None, ge=2000, le=2100)
@@ -77,7 +75,6 @@ class Exam(SQLModel, table=True):
 
 class Room(SQLModel, table=True):
     __tablename__ = "rooms"
-    __table_args__ = (UniqueConstraint("room_number", "building"),)
 
     room_id: str = Field(primary_key=True, max_length=20)
     room_number: int = Field(nullable=False)

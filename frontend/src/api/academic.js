@@ -17,13 +17,6 @@ export function listStudents(params) {
   return fetchJson(withQuery("/api/students", params));
 }
 
-export function createStudent(studentData) {
-  return fetchJson("/api/students", {
-    method: "POST",
-    body: JSON.stringify(studentData),
-  });
-}
-
 export function updateStudent(studentId, studentData) {
   return fetchJson(`/api/students/${encodeURIComponent(studentId)}`, {
     method: "PATCH",
@@ -55,13 +48,6 @@ export function updateDegreeProgram(programId, programData) {
 
 export function deleteDegreeProgram(programId) {
   return fetchJson(`/api/degree-programs/${programId}`, { method: "DELETE" });
-}
-
-export function createStudentProgram(studentProgramData) {
-  return fetchJson("/api/student-programs", {
-    method: "POST",
-    body: JSON.stringify(studentProgramData),
-  });
 }
 
 export function listCourseSections(params) {
@@ -180,19 +166,8 @@ export function listStudentExamAssignments(params) {
   return fetchJson(withQuery("/api/student-exam-assignments", params));
 }
 
-export function createCourseExamAssignments(courseExamAssignmentData) {
-  return fetchJson("/api/student-exam-assignments/course", {
-    method: "POST",
-    body: JSON.stringify(courseExamAssignmentData),
-  });
-}
-
 export function listExamAssignmentsByStudent(studentId) {
   return fetchJson(`/api/students/${encodeURIComponent(studentId)}/exam-assignments`);
-}
-
-export function listAssignmentConflicts(params) {
-  return fetchJson(withQuery("/api/assignment-conflicts", params));
 }
 
 export function uploadExamPdf(examId, file) {

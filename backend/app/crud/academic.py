@@ -169,14 +169,8 @@ def student_program_to_read(session: Session, item: StudentProgram) -> StudentPr
 def list_course_sections(session: Session, q: str | None = None) -> list[CourseSection]:
     statement = select(CourseSection)
     if q:
-        term = f"%{q}%"
-        statement = statement.where(
-            or_(
-                CourseSection.name.ilike(term),
-                CourseSection.section_code.ilike(term),
-            )
-        )
-    statement = statement.order_by(CourseSection.name, CourseSection.section_code)
+        statement = statement.where(CourseSection.name.ilike(f"%{q}%"))
+    statement = statement.order_by(CourseSection.name)
     return list(session.exec(statement).all())
 
 
@@ -207,7 +201,6 @@ def update_course_section(
 def course_section_to_read(course_section: CourseSection) -> CourseSectionRead:
     return CourseSectionRead(
         course_section_id=require_id(course_section.course_section_id, "CourseSection"),
-        section_code=course_section.section_code,
         name=course_section.name,
         capacity=course_section.capacity,
         created_at=course_section.created_at,
@@ -341,7 +334,7 @@ def update_exam(session: Session, exam: Exam, data: ExamUpdate) -> Exam:
 
 def exam_to_read(session: Session, exam: Exam) -> ExamRead:
     course_section = get_required(session, CourseSection, exam.course_section_id, "Course section")
-    exam_block = get_required(session, ExamBlock, exam.block_id, "Exam block")
+    exam_block = get_required(session, ExamBlock, exam.block_id, "Exam block") if exam.block_id is not None else None
     return ExamRead(
         exam_id=require_id(exam.exam_id, "Exam"),
         course_section_id=exam.course_section_id,
@@ -352,7 +345,7 @@ def exam_to_read(session: Session, exam: Exam) -> ExamRead:
         pdf_file_id=exam.pdf_file_id,
         created_at=exam.created_at,
         course_section=course_section_to_read(course_section),
-        block=exam_block_to_read(exam_block),
+        block=exam_block_to_read(exam_block) if exam_block is not None else None,
     )
 
 
